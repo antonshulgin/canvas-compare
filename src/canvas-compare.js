@@ -21,10 +21,7 @@
 					targetImage: targetImage
 				});
 			})
-			.catch(function (reason) {
-				panic(reason);
-				return;
-			});
+			.catch(panic);
 
 		return externals;
 
@@ -41,6 +38,7 @@
 					reject('no image URL provided');
 					return;
 				}
+
 				const image = new Image();
 				image.src = imageUrl;
 				image.addEventListener('load', onLoad, false);
@@ -48,7 +46,6 @@
 
 				function onError() {
 					reject('failed to load image `' + imageUrl + '`');
-					return;
 				}
 
 				function onLoad() {
@@ -60,6 +57,7 @@
 					context.drawImage(image, 0, 0);
 
 					const imageData = context.getImageData(0, 0, image.width, image.height);
+
 					resolve(imageData);
 				}
 			});
@@ -82,8 +80,7 @@
 	}
 
 	function panic(reason) {
-		const message = 'canvasCompare: ' + reason;
-		console.error(message);
+		console.error('canvas-compare: ' + reason);
 	}
 
 })(this);
