@@ -10,20 +10,55 @@
 			return;
 		}
 
-		const externals = {};
-
 		readImages()
 			.then(function (imageData) {
 				const baseImage = imageData[0];
 				const targetImage = imageData[1];
-				console.log({
-					baseImage: baseImage,
-					targetImage: targetImage
-				});
+				compareChannel(0, baseImage, targetImage);
 			})
 			.catch(panic);
 
-		return externals;
+		// channel:
+		// 0 - R
+		// 1 - G
+		// 2 - B
+		// 3 - A
+		function compareChannel(channel, baseImage, targetImage) {
+			if (!isNumber(channel)) {
+				panic('no valid channel provided');
+				return;
+			}
+			let idx = channel;
+			if (!isImageData(baseImage)) {
+				panic('no valid baseImage provided');
+				return;
+			}
+			const baseData = baseImage.data;
+			const width = baseImage.width;
+			const height = baseImage.height;
+			if (!isImageData(targetImage)) {
+				panic('no valid targetImage provided');
+				return;
+			}
+			const targetData = targetImage.data;
+			if (targetData.length !== baseData.length) {
+				panic('images have different sizes');
+				return;
+			}
+			const len = baseData.length;
+			let diff = new Uint8ClampedArray(len);
+			for (idx; idx < len; idx += 4) {
+				diff[idx] = baseData[idx] - targetData[idx];
+				diff[idx + 3] = 255;
+			}
+			const diffData = new window.ImageData(diff, width, height);
+			const canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			const context = canvas.getContext('2d');
+			context.putImageData(diffData, 0, 0);
+			document.body.appendChild(canvas);
+		}
 
 		function readImages() {
 			return Promise.all([
@@ -65,6 +100,15 @@
 	}
 
 	// Utility stuff
+
+	function isNumber(item) {
+		return (toStringCall(item) === '[object Number]') &&
+			isFinite(item);
+	}
+
+	function isImageData(item) {
+		return toStringCall(item) === '[object ImageData]';
+	}
 
 	function isNonEmptyString(item) {
 		return (toStringCall(item) === '[object String]') &&
