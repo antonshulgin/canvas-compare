@@ -55,8 +55,10 @@
 			const height = baseImage.height;
 			let diff = new Uint8ClampedArray(len);
 			let idx = 0;
+			let idxChannel;
 			for (idx; idx < len; idx += 4) {
-				diff[idx + channel] = baseData[idx] - targetData[idx];
+				idxChannel = idx + channel;
+				diff[idxChannel] = baseData[idxChannel] - targetData[idxChannel];
 				diff[idx + CHANNEL_A] = 255;
 			}
 			const diffData = new window.ImageData(diff, width, height);
