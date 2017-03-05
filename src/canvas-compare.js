@@ -2,6 +2,11 @@
 (function (exports, undefined) {
 	'use strict';
 
+	const CHANNEL_R = 0;
+	const CHANNEL_G = 1;
+	const CHANNEL_B = 2;
+	const CHANNEL_A = 3;
+
 	exports.canvasCompare = canvasCompare;
 
 	function canvasCompare(params) {
@@ -16,7 +21,9 @@
 			.then(function (imageData) {
 				setBaseImage(imageData[0]);
 				setTargetImage(imageData[1]);
-				compareChannel(0, getBaseImage(), getTargetImage());
+				compareChannel(CHANNEL_R);
+				compareChannel(CHANNEL_G);
+				compareChannel(CHANNEL_B);
 			})
 			.catch(panic);
 
@@ -24,20 +31,18 @@
 		// 0 - R
 		// 1 - G
 		// 2 - B
-		// 3 - A
-		function compareChannel(channel, baseImage, targetImage) {
-			if (!isNumber(channel)) {
+		function compareChannel(channel) {
+			if (!isValidChannel(channel)) {
 				panic('no valid channel provided');
 				return;
 			}
-			let idx = channel;
-			if (!isImageData(baseImage)) {
-				panic('no valid baseImage provided');
+			const baseImage = getBaseImage();
+			if (!baseImage) {
 				return;
 			}
 			const baseData = baseImage.data;
-			if (!isImageData(targetImage)) {
-				panic('no valid targetImage provided');
+			const targetImage = getTargetImage();
+			if (!targetImage) {
 				return;
 			}
 			const targetData = targetImage.data;
@@ -49,9 +54,10 @@
 			const width = baseImage.width;
 			const height = baseImage.height;
 			let diff = new Uint8ClampedArray(len);
+			let idx = 0;
 			for (idx; idx < len; idx += 4) {
-				diff[idx] = (baseData[idx] - targetData[idx]) || 0;
-				diff[idx + 3] = 255;
+				diff[idx + channel] = baseData[idx] - targetData[idx];
+				diff[idx + CHANNEL_A] = 255;
 			}
 			const diffData = new window.ImageData(diff, width, height);
 			const canvas = document.createElement('canvas');
@@ -60,6 +66,7 @@
 			const context = canvas.getContext('2d');
 			context.putImageData(diffData, 0, 0);
 			document.body.appendChild(canvas);
+			console.log(diffData);
 		}
 
 		function readImages() {
@@ -126,6 +133,12 @@
 	}
 
 	// Utility stuff
+
+	function isValidChannel(item) {
+		return isNumber(item) &&
+			(item >= CHANNEL_R) &&
+			(item <= CHANNEL_B);
+	}
 
 	function isNumber(item) {
 		return (toStringCall(item) === '[object Number]') &&
