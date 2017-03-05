@@ -10,11 +10,13 @@
 			return;
 		}
 
+		const internals = {};
+
 		readImages()
 			.then(function (imageData) {
-				const baseImage = imageData[0];
-				const targetImage = imageData[1];
-				compareChannel(0, baseImage, targetImage);
+				setBaseImage(imageData[0]);
+				setTargetImage(imageData[1]);
+				compareChannel(0, getBaseImage(), getTargetImage());
 			})
 			.catch(panic);
 
@@ -40,7 +42,7 @@
 			}
 			const targetData = targetImage.data;
 			if (targetData.length !== baseData.length) {
-				panic('images have different sizes');
+				panic('mismatching image sizes');
 				return;
 			}
 			const len = baseData.length;
@@ -96,6 +98,30 @@
 					resolve(imageData);
 				}
 			});
+		}
+
+		function getTargetImage() {
+			return internals.targetImage;
+		}
+
+		function setTargetImage(targetImage) {
+			if (!isImageData(targetImage)) {
+				panic('no valid targetImage provided');
+				return;
+			}
+			internals.targetImage = targetImage;
+		}
+
+		function getBaseImage() {
+			return internals.baseImage;
+		}
+
+		function setBaseImage(baseImage) {
+			if (!isImageData(baseImage)) {
+				panic('no valid baseImage provided');
+				return;
+			}
+			internals.baseImage = baseImage;
 		}
 	}
 
