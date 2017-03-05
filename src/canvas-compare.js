@@ -34,8 +34,6 @@
 				return;
 			}
 			const baseData = baseImage.data;
-			const width = baseImage.width;
-			const height = baseImage.height;
 			if (!isImageData(targetImage)) {
 				panic('no valid targetImage provided');
 				return;
@@ -46,9 +44,11 @@
 				return;
 			}
 			const len = baseData.length;
+			const width = baseImage.width;
+			const height = baseImage.height;
 			let diff = new Uint8ClampedArray(len);
 			for (idx; idx < len; idx += 4) {
-				diff[idx] = baseData[idx] - targetData[idx];
+				diff[idx] = (baseData[idx] - targetData[idx]) || 0;
 				diff[idx + 3] = 255;
 			}
 			const diffData = new window.ImageData(diff, width, height);
