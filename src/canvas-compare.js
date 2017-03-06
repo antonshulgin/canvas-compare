@@ -53,7 +53,7 @@
 			const len = baseData.length;
 			const width = baseImage.width;
 			const height = baseImage.height;
-			let diff = new Uint8ClampedArray(len);
+			const diff = new Uint8ClampedArray(len);
 			let idx = 0;
 			let idxChannel;
 			for (idx; idx < len; idx += 4) {
@@ -68,7 +68,6 @@
 			const context = canvas.getContext('2d');
 			context.putImageData(diffData, 0, 0);
 			document.body.appendChild(canvas);
-			console.log(diffData);
 		}
 
 		function readImages() {
@@ -84,7 +83,6 @@
 					reject('no image URL provided');
 					return;
 				}
-
 				const image = new Image();
 				image.src = imageUrl;
 				image.addEventListener('load', onLoad, false);
@@ -96,14 +94,13 @@
 
 				function onLoad() {
 					const canvas = document.createElement('canvas');
-					canvas.width = image.width;
-					canvas.height = image.height;
-
+					const width = image.width;
+					const height = image.height;
+					canvas.width = width;
+					canvas.height = height;
 					const context = canvas.getContext('2d');
 					context.drawImage(image, 0, 0);
-
-					const imageData = context.getImageData(0, 0, image.width, image.height);
-
+					const imageData = context.getImageData(0, 0, width, height);
 					resolve(imageData);
 				}
 			});
