@@ -2,11 +2,6 @@
 (function (exports, undefined) {
 	'use strict';
 
-	const CHANNEL_R = 0;
-	const CHANNEL_G = 1;
-	const CHANNEL_B = 2;
-	const CHANNEL_A = 3;
-
 	exports.canvasCompare = canvasCompare;
 
 	function canvasCompare(params) {
@@ -21,53 +16,54 @@
 			.then(function (imageData) {
 				setBaseImage(imageData[0]);
 				setTargetImage(imageData[1]);
-				compareChannel(CHANNEL_R);
-				compareChannel(CHANNEL_G);
-				compareChannel(CHANNEL_B);
+				readDiffData()
+					.then(function (diffData) {
+						console.log(diffData);
+					})
+					.catch(panic);
 			})
 			.catch(panic);
 
-		// channel:
-		// 0 - R
-		// 1 - G
-		// 2 - B
-		function compareChannel(channel) {
-			if (!isValidChannel(channel)) {
-				panic('no valid channel provided');
-				return;
-			}
-			const baseImage = getBaseImage();
-			if (!baseImage) {
-				return;
-			}
-			const baseData = baseImage.data;
-			const targetImage = getTargetImage();
-			if (!targetImage) {
-				return;
-			}
-			const targetData = targetImage.data;
-			if (targetData.length !== baseData.length) {
-				panic('mismatching image sizes');
-				return;
-			}
-			const len = baseData.length;
-			const width = baseImage.width;
-			const height = baseImage.height;
-			const diff = new Uint8ClampedArray(len);
-			let idx = 0;
-			let idxChannel;
-			for (idx; idx < len; idx += 4) {
-				idxChannel = idx + channel;
-				diff[idxChannel] = baseData[idxChannel] - targetData[idxChannel];
-				diff[idx + CHANNEL_A] = 255;
-			}
-			const diffData = new window.ImageData(diff, width, height);
-			const canvas = document.createElement('canvas');
-			canvas.width = width;
-			canvas.height = height;
-			const context = canvas.getContext('2d');
-			context.putImageData(diffData, 0, 0);
-			document.body.appendChild(canvas);
+		function readDiffData() {
+			const CHANNEL_R = 0;
+			const CHANNEL_G = 1;
+			const CHANNEL_B = 2;
+			const CHANNEL_A = 3;
+			return new Promise(function (resolve, reject) {
+				const baseImage = getBaseImage();
+				if (!baseImage) {
+					reject('baseImage is not set');
+					return;
+				}
+				const baseData = baseImage.data;
+				const targetImage = getTargetImage();
+				if (!targetImage) {
+					reject('targetImage is not set');
+					return;
+				}
+				const targetData = targetImage.data;
+				if (targetData.length !== baseData.length) {
+					reject('mismatching image sizes');
+					return;
+				}
+				const len = baseData.length;
+				const width = baseImage.width;
+				const height = baseImage.height;
+				const diff = new Uint8ClampedArray(len);
+				let idx = 0;
+				let idxR, idxG, idxB;
+				for (idx; idx < len; idx += 4) {
+					idxR = idx + CHANNEL_R;
+					idxG = idx + CHANNEL_G;
+					idxB = idx + CHANNEL_B;
+					diff[idxR] = baseData[idxR] - targetData[idxR];
+					diff[idxG] = baseData[idxG] - targetData[idxG];
+					diff[idxB] = baseData[idxB] - targetData[idxB];
+					diff[idx + CHANNEL_A] = 255;
+				}
+				const diffData = new window.ImageData(diff, width, height);
+				resolve(diffData);
+			});
 		}
 
 		function readImages() {
@@ -132,17 +128,6 @@
 	}
 
 	// Utility stuff
-
-	function isValidChannel(item) {
-		return isNumber(item) &&
-			(item >= CHANNEL_R) &&
-			(item <= CHANNEL_B);
-	}
-
-	function isNumber(item) {
-		return (toStringCall(item) === '[object Number]') &&
-			isFinite(item);
-	}
 
 	function isImageData(item) {
 		return toStringCall(item) === '[object ImageData]';
