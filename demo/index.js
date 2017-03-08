@@ -11,8 +11,8 @@
 			return;
 		}
 		canvasCompare({
-			baseImage: './images/base.png',
-			targetImage: './images/target.png'
+			baseImage: './images/base.jpg',
+			targetImage: './images/target.jpg'
 		});
 	}
 
