@@ -2,18 +2,31 @@
 (function (window) {
 	'use strict';
 
+	let precision = 1;
+	let slider;
+
+	const demo = {};
+
+	demo.update = update;
+
+	window.demo = demo;
 	window.addEventListener('load', init, false);
 
-	const precision = 0.04;
-
 	function init() {
-		window.imagesToCompare = window.canvasCompare({
+		slider = document.getElementById('slider');
+		update();
+	}
+
+	function update(event) {
+		precision = event ? (parseFloat(event.target.value) || 1) : 1;
+		slider.disabled = true;
+		const imagesToCompare = window.canvasCompare({
 			baseImageUrl: './images/base.jpg',
 			targetImageUrl: './images/target.jpg',
-			//targetImageUrl: './images/mismatch.png',
 			precision: precision
 		});
-		window.imagesToCompare.compare()
+		imagesToCompare
+			.compare()
 			.then(onCompare)
 			.catch(console.error);
 	}
@@ -25,17 +38,16 @@
 		const canvas = document.createElement('canvas');
 		canvas.width = width;
 		canvas.height = height;
+
 		const context = canvas.getContext('2d');
 		context.putImageData(diffData, 0, 0);
 
-		const image = new Image();
-		image.src = canvas.toDataURL();
-		image.width = Math.round(width / precision) || 1;
-		image.height = Math.round(height / precision) || 1;
-		image.style.imageRendering = 'optimizespeed'; // disable interpolation
-
-		const root = document.getElementById('root');
-		root.appendChild(image);
+		const preview = document.getElementById('preview');
+		preview.src = canvas.toDataURL();
+		preview.width = Math.round(width / precision) || 1;
+		preview.height = Math.round(height / precision) || 1;
+		preview.style.imageRendering = 'optimizespeed'; // disable interpolation
+		slider.disabled = false;
 	}
 
 })(this);
