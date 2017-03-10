@@ -4,126 +4,47 @@
 
 	exports.canvasCompare = canvasCompare;
 
+	const ERR_NO_PARAMS = 'No params provided';
+	const ERR_NO_BASE_IMAGE_URL = 'No valid baseImageUrl provided';
+	const ERR_NO_TARGET_IMAGE_URL = 'No valid targetImageUrl provided';
+
 	function canvasCompare(params) {
+		const internals = {};
 		if (!isObject(params)) {
-			panic('no parameters provided');
+			panic(ERR_NO_PARAMS);
+			return;
+		}
+		setBaseImageUrl(params.baseImageUrl);
+		if (!getBaseImageUrl()) {
+			return;
+		}
+		setTargetImageUrl(params.targetImageUrl);
+		if (!getTargetImageUrl()) {
 			return;
 		}
 
-		const internals = {};
-
-		readImages()
-			.then(function (imageData) {
-				setBaseImage(imageData[0]);
-				setTargetImage(imageData[1]);
-				readDiffData()
-					.then(function (diffData) {
-						console.log(diffData);
-					})
-					.catch(panic);
-			})
-			.catch(panic);
-
-		function readDiffData() {
-			const CHANNEL_R = 0;
-			const CHANNEL_G = 1;
-			const CHANNEL_B = 2;
-			const CHANNEL_A = 3;
-			return new Promise(function (resolve, reject) {
-				const baseImage = getBaseImage();
-				if (!baseImage) {
-					reject('baseImage is not set');
-					return;
-				}
-				const baseData = baseImage.data;
-				const targetImage = getTargetImage();
-				if (!targetImage) {
-					reject('targetImage is not set');
-					return;
-				}
-				const targetData = targetImage.data;
-				if (targetData.length !== baseData.length) {
-					reject('mismatching image sizes');
-					return;
-				}
-				const len = baseData.length;
-				const width = baseImage.width;
-				const height = baseImage.height;
-				const diff = new Uint8ClampedArray(len);
-				let idx = 0;
-				let idxR, idxG, idxB;
-				for (idx; idx < len; idx += 4) {
-					idxR = idx + CHANNEL_R;
-					idxG = idx + CHANNEL_G;
-					idxB = idx + CHANNEL_B;
-					diff[idxR] = baseData[idxR] - targetData[idxR];
-					diff[idxG] = baseData[idxG] - targetData[idxG];
-					diff[idxB] = baseData[idxB] - targetData[idxB];
-					diff[idx + CHANNEL_A] = 255;
-				}
-				const diffData = new window.ImageData(diff, width, height);
-				resolve(diffData);
-			});
+		function getTargetImageUrl() {
+			return internals.targetImageUrl;
 		}
 
-		function readImages() {
-			return Promise.all([
-				readImageData(params.baseImage),
-				readImageData(params.targetImage)
-			]);
-		}
-
-		function readImageData(imageUrl) {
-			return new Promise(function (resolve, reject) {
-				if (!isNonEmptyString(imageUrl)) {
-					reject('no image URL provided');
-					return;
-				}
-				const image = new Image();
-				image.src = imageUrl;
-				image.addEventListener('load', onLoad, false);
-				image.addEventListener('error', onError, false);
-
-				function onError() {
-					reject('failed to load image `' + imageUrl + '`');
-				}
-
-				function onLoad() {
-					const canvas = document.createElement('canvas');
-					const width = image.width;
-					const height = image.height;
-					canvas.width = width;
-					canvas.height = height;
-					const context = canvas.getContext('2d');
-					context.drawImage(image, 0, 0);
-					const imageData = context.getImageData(0, 0, width, height);
-					resolve(imageData);
-				}
-			});
-		}
-
-		function getTargetImage() {
-			return internals.targetImage;
-		}
-
-		function setTargetImage(targetImage) {
-			if (!isImageData(targetImage)) {
-				panic('no valid targetImage provided');
+		function setTargetImageUrl(targetImageUrl) {
+			if (!isNonEmptyString(targetImageUrl)) {
+				panic(ERR_NO_TARGET_IMAGE_URL);
 				return;
 			}
-			internals.targetImage = targetImage;
+			internals.targetImageUrl = targetImageUrl;
 		}
 
-		function getBaseImage() {
-			return internals.baseImage;
+		function getBaseImageUrl() {
+			return internals.baseImageUrl;
 		}
 
-		function setBaseImage(baseImage) {
-			if (!isImageData(baseImage)) {
-				panic('no valid baseImage provided');
+		function setBaseImageUrl(baseImageUrl) {
+			if (!isNonEmptyString(baseImageUrl)) {
+				panic(ERR_NO_BASE_IMAGE_URL);
 				return;
 			}
-			internals.baseImage = baseImage;
+			internals.baseImageUrl = baseImageUrl;
 		}
 	}
 

@@ -1,19 +1,20 @@
 // jshint esnext: true
-(function () {
+(function (window) {
 	'use strict';
 
 	window.addEventListener('load', init, false);
 
 	function init() {
-		/* global canvasCompare */
+		const canvasCompare = window.canvasCompare;
 		if (!canvasCompare) {
 			console.log('no canvasCompare');
 			return;
 		}
-		canvasCompare({
-			baseImage: './images/base.jpg',
-			targetImage: './images/target.jpg'
+		const images = canvasCompare({
+			baseImageUrl: './images/base.jpg',
+			targetImageUrl: './images/target.jpg'
 		});
+		console.log(images);
 	}
 
-})();
+})(this);
