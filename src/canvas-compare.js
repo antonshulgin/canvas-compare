@@ -10,17 +10,31 @@
 
 	function canvasCompare(params) {
 		const internals = {};
+		const externals = {};
 		if (!isObject(params)) {
 			panic(ERR_NO_PARAMS);
 			return;
 		}
-		setBaseImageUrl(params.baseImageUrl);
-		if (!getBaseImageUrl()) {
+		if (!setBaseImageUrl(params.baseImageUrl)) {
 			return;
 		}
-		setTargetImageUrl(params.targetImageUrl);
-		if (!getTargetImageUrl()) {
+		if (!setTargetImageUrl(params.targetImageUrl)) {
 			return;
+		}
+
+		externals.compare = compare;
+
+		return externals;
+
+		function compare() {
+			const baseImageUrl = getBaseImageUrl();
+			if (!baseImageUrl) {
+				return;
+			}
+			const targetImageUrl = getTargetImageUrl();
+			if (!targetImageUrl) {
+				return;
+			}
 		}
 
 		function getTargetImageUrl() {
@@ -33,6 +47,7 @@
 				return;
 			}
 			internals.targetImageUrl = targetImageUrl;
+			return getTargetImageUrl();
 		}
 
 		function getBaseImageUrl() {
@@ -45,6 +60,7 @@
 				return;
 			}
 			internals.baseImageUrl = baseImageUrl;
+			return getBaseImageUrl();
 		}
 	}
 
