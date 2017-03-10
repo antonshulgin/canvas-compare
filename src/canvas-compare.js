@@ -44,18 +44,23 @@
 					return;
 				}
 				readImages(baseImageUrl, targetImageUrl)
-					.then(function (imageDatas) {
-						if (!setBaseImageData(imageDatas[0])) {
-							reject('Failed to set baseImageData');
-							return;
-						}
-						if (!setTargetImageData(imageDatas[1])) {
-							reject('Failed to set targetImageData');
-							return;
-						}
-						resolve(imageDatas);
-					})
+					.then(onReadImages)
 					.catch(panic);
+
+				function onReadImages(imageDatas) {
+					if (!setBaseImageData(imageDatas[0])) {
+						reject('Failed to set baseImageData');
+						return;
+					}
+					if (!setTargetImageData(imageDatas[1])) {
+						reject('Failed to set targetImageData');
+						return;
+					}
+					resolve({
+						baseImageData: getBaseImageData(),
+						targetImageData: getTargetImageData()
+					});
+				}
 			}
 		}
 
