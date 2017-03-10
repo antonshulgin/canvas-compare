@@ -43,7 +43,7 @@
 					reject(ERR_NO_TARGET_IMAGE_URL);
 					return;
 				}
-				readImages(baseImageUrl, targetImageUrl)
+				return readImages(baseImageUrl, targetImageUrl)
 					.then(onReadImages)
 					.catch(panic);
 
@@ -56,10 +56,13 @@
 						reject('Failed to set targetImageData');
 						return;
 					}
-					resolve({
-						baseImageData: getBaseImageData(),
-						targetImageData: getTargetImageData()
-					});
+					return readDiffData(getBaseImageData(), getTargetImageData())
+						.then(onReadDiffData)
+						.catch(panic);
+
+					function onReadDiffData(diffData) {
+						resolve(diffData);
+					}
 				}
 			}
 		}
@@ -117,6 +120,42 @@
 		}
 	}
 
+	// Instance-independent logic
+
+	function readDiffData(baseImageData, targetImageData, precision) {
+		precision = sanitizePrecision(precision);
+		return new Promise(promiseReadDiffData);
+
+		function promiseReadDiffData(resolve, reject) {
+			if (!isImageData(baseImageData)) {
+				reject(ERR_NO_BASE_IMAGE_DATA);
+				return;
+			}
+			if (!isImageData(targetImageData)) {
+				reject(ERR_NO_TARGET_IMAGE_DATA);
+				return;
+			}
+			resolve({
+				diffData: 'yes'
+			});
+		}
+	}
+
+	function sanitizePrecision(precision) {
+		const MIN_PRECISION = 0.1;
+		const MAX_PRECISION = 1;
+		if (!isNumber(precision)) {
+			return MAX_PRECISION;
+		}
+		if (precision < MIN_PRECISION) {
+			return MIN_PRECISION;
+		}
+		if (precision > MAX_PRECISION) {
+			return MAX_PRECISION;
+		}
+		return precision;
+	}
+
 	function readImages(baseImageUrl, targetImageUrl) {
 		if (!isNonEmptyString(baseImageUrl)) {
 			return Promise.reject(ERR_NO_BASE_IMAGE_URL);
@@ -166,6 +205,11 @@
 	}
 
 	// Utility stuff
+
+	function isNumber(item) {
+		return (toStringCall(item) === '[object Number]') &&
+			isFinite(item);
+	}
 
 	function isImageData(item) {
 		return toStringCall(item) === '[object ImageData]';
