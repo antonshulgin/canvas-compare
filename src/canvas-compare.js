@@ -26,7 +26,7 @@
 		if (!setTargetImageUrl(params.targetImageUrl)) {
 			return;
 		}
-		setPrecision(params.precision);
+		setScale(params.scale);
 
 		externals.compare = compare;
 
@@ -46,7 +46,7 @@
 					reject(ERR_NO_TARGET_IMAGE_URL);
 					return;
 				}
-				return readImages(baseImageUrl, targetImageUrl, getPrecision())
+				return readImages(baseImageUrl, targetImageUrl, getScale())
 					.then(onReadImages)
 					.catch(panic);
 
@@ -92,12 +92,12 @@
 			return getDiffData();
 		}
 
-		function getPrecision() {
-			return internals.precision;
+		function getScale() {
+			return internals.scale;
 		}
 
-		function setPrecision(precision) {
-			internals.precision = sanitizePrecision(precision);
+		function setScale(scale) {
+			internals.scale = sanitizeScale(scale);
 		}
 
 		function getTargetImageData() {
@@ -195,23 +195,23 @@
 		}
 	}
 
-	function sanitizePrecision(precision) {
-		const MIN_PRECISION = 0.01;
-		const MAX_PRECISION = 1;
-		if (!isNumber(precision)) {
-			return MAX_PRECISION;
+	function sanitizeScale(scale) {
+		const MIN_SCALE = 0.01;
+		const MAX_SCALE = 1;
+		if (!isNumber(scale)) {
+			return MAX_SCALE;
 		}
-		if (precision < MIN_PRECISION) {
-			return MIN_PRECISION;
+		if (scale < MIN_SCALE) {
+			return MIN_SCALE;
 		}
-		if (precision > MAX_PRECISION) {
-			return MAX_PRECISION;
+		if (scale > MAX_SCALE) {
+			return MAX_SCALE;
 		}
-		return precision;
+		return scale;
 	}
 
-	function readImages(baseImageUrl, targetImageUrl, precision) {
-		precision = sanitizePrecision(precision);
+	function readImages(baseImageUrl, targetImageUrl, scale) {
+		scale = sanitizeScale(scale);
 		if (!isNonEmptyString(baseImageUrl)) {
 			return Promise.reject(ERR_NO_BASE_IMAGE_URL);
 		}
@@ -219,13 +219,13 @@
 			return Promise.reject(ERR_NO_TARGET_IMAGE_URL);
 		}
 		return Promise.all([
-			readImage(baseImageUrl, precision),
-			readImage(targetImageUrl, precision)
+			readImage(baseImageUrl, scale),
+			readImage(targetImageUrl, scale)
 		]);
 	}
 
-	function readImage(imageUrl, precision) {
-		precision = sanitizePrecision(precision);
+	function readImage(imageUrl, scale) {
+		scale = sanitizeScale(scale);
 		return new Promise(promiseReadImage);
 
 		function promiseReadImage(resolve, reject) {
@@ -239,8 +239,8 @@
 			image.addEventListener('error', onError, false);
 
 			function onLoad() {
-				const width = image.width * precision;
-				const height = image.height * precision;
+				const width = image.width * scale;
+				const height = image.height * scale;
 				const canvas = document.createElement('canvas');
 				canvas.width = width;
 				canvas.height = height;

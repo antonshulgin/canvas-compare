@@ -2,7 +2,7 @@
 (function (window) {
 	'use strict';
 
-	let precision = 1;
+	let scale = 1;
 	let slider;
 
 	const demo = {};
@@ -18,12 +18,12 @@
 	}
 
 	function update(event) {
-		precision = event ? (parseFloat(event.target.value) || 1) : 1;
+		scale = event ? (parseFloat(event.target.value) || 1) : 1;
 		slider.disabled = true;
 		const imagesToCompare = window.canvasCompare({
 			baseImageUrl: './images/base.jpg',
 			targetImageUrl: './images/target.jpg',
-			precision: precision
+			scale: scale
 		});
 		imagesToCompare
 			.compare()
@@ -44,8 +44,8 @@
 
 		const preview = document.getElementById('preview');
 		preview.src = canvas.toDataURL();
-		preview.width = Math.round(width / precision) || 1;
-		preview.height = Math.round(height / precision) || 1;
+		preview.width = Math.round(width / scale) || 1;
+		preview.height = Math.round(height / scale) || 1;
 		preview.style.imageRendering = 'optimizespeed'; // disable interpolation
 		slider.disabled = false;
 	}
