@@ -4,6 +4,7 @@
 
 	exports.canvasCompare = canvasCompare;
 
+	const ImageData = window.ImageData;
 	const ERR_NO_PARAMS = 'No params provided';
 	const ERR_NO_IMAGE_URL = 'No valid imageUrl provided';
 	const ERR_NO_BASE_IMAGE_URL = 'No valid baseImageUrl provided';
@@ -123,6 +124,10 @@
 	// Instance-independent logic
 
 	function readDiffData(baseImageData, targetImageData, precision) {
+		const CHANNEL_R = 0;
+		const CHANNEL_G = 1;
+		const CHANNEL_B = 2;
+		const CHANNEL_A = 3;
 		precision = sanitizePrecision(precision);
 		return new Promise(promiseReadDiffData);
 
@@ -135,9 +140,27 @@
 				reject(ERR_NO_TARGET_IMAGE_DATA);
 				return;
 			}
-			resolve({
-				diffData: 'yes'
-			});
+			const dataLength = baseImageData.data.length;
+			const dataWidth = baseImageData.width;
+			const dataHeight = baseImageData.height;
+			const diff = new Uint8ClampedArray(dataLength);
+			let idx;
+			let idxR;
+			let idxG;
+			let idxB;
+			let idxA;
+			for (idx = 0; idx < dataLength; idx += 4) {
+				idxR = CHANNEL_R + idx;
+				idxG = CHANNEL_G + idx;
+				idxB = CHANNEL_B + idx;
+				idxA = CHANNEL_A + idx;
+				diff[idxR] = 255 - (baseImageData.data[idxR] - targetImageData.data[idxR]);
+				diff[idxG] = 255 - (baseImageData.data[idxG] - targetImageData.data[idxG]);
+				diff[idxB] = 255 - (baseImageData.data[idxB] - targetImageData.data[idxB]);
+				diff[idxA] = 255; // ignore transparency for now
+			}
+			const diffData = new ImageData(diff, dataWidth, dataHeight);
+			resolve(diffData);
 		}
 	}
 
@@ -183,9 +206,9 @@
 			image.addEventListener('error', onError, false);
 
 			function onLoad() {
-				const canvas = document.createElement('canvas');
 				const width = image.width;
 				const height = image.height;
+				const canvas = document.createElement('canvas');
 				canvas.width = width;
 				canvas.height = height;
 				const context = canvas.getContext('2d');
