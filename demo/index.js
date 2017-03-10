@@ -7,15 +7,22 @@
 	function init() {
 		window.imagesToCompare = window.canvasCompare({
 			baseImageUrl: './images/base.jpg',
-			targetImageUrl: './images/target.jpg'
+			targetImageUrl: './images/target.jpg',
+			precision: 0.1
 		});
 		window.imagesToCompare.compare()
-			.then(function (diffData) {
-				console.log({ diffData: diffData });
-			})
-			.catch(function (reason) {
-				console.log({ error: reason });
-			});
+			.then(onCompare)
+			.catch(console.log);
+	}
+
+	function onCompare(diffData) {
+		const canvas = document.createElement('canvas');
+		canvas.width = diffData.width;
+		canvas.height = diffData.height;
+		const context = canvas.getContext('2d');
+		context.putImageData(diffData, 0, 0);
+		const root = document.getElementById('root');
+		root.appendChild(canvas);
 	}
 
 })(this);

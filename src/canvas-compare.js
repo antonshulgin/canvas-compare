@@ -11,6 +11,7 @@
 	const ERR_NO_BASE_IMAGE_DATA = 'No valid baseImageData provided';
 	const ERR_NO_TARGET_IMAGE_URL = 'No valid targetImageUrl provided';
 	const ERR_NO_TARGET_IMAGE_DATA = 'No valid targetImageData provided';
+	const ERR_NO_PRECISION = 'No valid precision provided';
 
 	function canvasCompare(params) {
 		const internals = {};
@@ -25,6 +26,7 @@
 		if (!setTargetImageUrl(params.targetImageUrl)) {
 			return;
 		}
+		setPrecision(params.precision);
 
 		externals.compare = compare;
 
@@ -57,15 +59,24 @@
 						reject('Failed to set targetImageData');
 						return;
 					}
-					return readDiffData(getBaseImageData(), getTargetImageData())
+					return readDiffData(getBaseImageData(), getTargetImageData(), getPrecision())
 						.then(onReadDiffData)
 						.catch(panic);
 
 					function onReadDiffData(diffData) {
+						console.log({ internals: internals });
 						resolve(diffData);
 					}
 				}
 			}
+		}
+
+		function getPrecision() {
+			return internals.precision;
+		}
+
+		function setPrecision(precision) {
+			internals.precision = sanitizePrecision(precision);
 		}
 
 		function getTargetImageData() {
