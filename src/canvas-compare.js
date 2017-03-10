@@ -11,7 +11,7 @@
 	const ERR_NO_BASE_IMAGE_DATA = 'No valid baseImageData provided';
 	const ERR_NO_TARGET_IMAGE_URL = 'No valid targetImageUrl provided';
 	const ERR_NO_TARGET_IMAGE_DATA = 'No valid targetImageData provided';
-	const ERR_NO_PRECISION = 'No valid precision provided';
+	const ERR_NO_IMAGE_DATA = 'No valid ImageData provided';
 
 	function canvasCompare(params) {
 		const internals = {};
@@ -46,7 +46,7 @@
 					reject(ERR_NO_TARGET_IMAGE_URL);
 					return;
 				}
-				return readImages(baseImageUrl, targetImageUrl)
+				return readImages(baseImageUrl, targetImageUrl, getPrecision())
 					.then(onReadImages)
 					.catch(panic);
 
@@ -59,16 +59,29 @@
 						reject('Failed to set targetImageData');
 						return;
 					}
-					return readDiffData(getBaseImageData(), getTargetImageData(), getPrecision())
+					return readDiffData(getBaseImageData(), getTargetImageData())
 						.then(onReadDiffData)
 						.catch(panic);
 
 					function onReadDiffData(diffData) {
-						console.log({ internals: internals });
-						resolve(diffData);
+						setDiffData(diffData);
+						resolve(getDiffData());
 					}
 				}
 			}
+		}
+
+		function getDiffData() {
+			return internals.diffData;
+		}
+
+		function setDiffData(diffData) {
+			if (!isImageData(diffData)) {
+				panic(ERR_NO_IMAGE_DATA);
+				return;
+			}
+			internals.diffData = diffData;
+			return getDiffData();
 		}
 
 		function getPrecision() {
@@ -134,12 +147,12 @@
 
 	// Instance-independent logic
 
-	function readDiffData(baseImageData, targetImageData, precision) {
+	function readDiffData(baseImageData, targetImageData) {
+		//const timeStart = new Date().getTime();
 		const CHANNEL_R = 0;
 		const CHANNEL_G = 1;
 		const CHANNEL_B = 2;
 		const CHANNEL_A = 3;
-		precision = sanitizePrecision(precision);
 		return new Promise(promiseReadDiffData);
 
 		function promiseReadDiffData(resolve, reject) {
@@ -171,6 +184,8 @@
 				diff[idxA] = 255; // ignore transparency for now
 			}
 			const diffData = new ImageData(diff, dataWidth, dataHeight);
+			//const timeEnd = new Date().getTime();
+			//console.log({ timeTotal: timeEnd - timeStart });
 			resolve(diffData);
 		}
 	}
@@ -190,7 +205,8 @@
 		return precision;
 	}
 
-	function readImages(baseImageUrl, targetImageUrl) {
+	function readImages(baseImageUrl, targetImageUrl, precision) {
+		precision = sanitizePrecision(precision);
 		if (!isNonEmptyString(baseImageUrl)) {
 			return Promise.reject(ERR_NO_BASE_IMAGE_URL);
 		}
@@ -198,12 +214,13 @@
 			return Promise.reject(ERR_NO_TARGET_IMAGE_URL);
 		}
 		return Promise.all([
-			readImage(baseImageUrl),
-			readImage(targetImageUrl)
+			readImage(baseImageUrl, precision),
+			readImage(targetImageUrl, precision)
 		]);
 	}
 
-	function readImage(imageUrl) {
+	function readImage(imageUrl, precision) {
+		precision = sanitizePrecision(precision);
 		return new Promise(promiseReadImage);
 
 		function promiseReadImage(resolve, reject) {
@@ -217,13 +234,13 @@
 			image.addEventListener('error', onError, false);
 
 			function onLoad() {
-				const width = image.width;
-				const height = image.height;
+				const width = image.width * precision;
+				const height = image.height * precision;
 				const canvas = document.createElement('canvas');
 				canvas.width = width;
 				canvas.height = height;
 				const context = canvas.getContext('2d');
-				context.drawImage(image, 0, 0);
+				context.drawImage(image, 0, 0, width, height);
 				const imageData = context.getImageData(0, 0, width, height);
 				if (!isImageData(imageData)) {
 					reject('Failed to extract imageData from ' + imageUrl);
