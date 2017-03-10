@@ -10,11 +10,12 @@
 		window.imagesToCompare = window.canvasCompare({
 			baseImageUrl: './images/base.jpg',
 			targetImageUrl: './images/target.jpg',
+			//targetImageUrl: './images/mismatch.png',
 			precision: precision
 		});
 		window.imagesToCompare.compare()
 			.then(onCompare)
-			.catch(console.log);
+			.catch(console.error);
 	}
 
 	function onCompare(diffData) {

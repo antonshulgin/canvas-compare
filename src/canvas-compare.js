@@ -59,6 +59,14 @@
 						reject('Failed to set targetImageData');
 						return;
 					}
+					const baseImageData = getBaseImageData();
+					const targetImageData = getTargetImageData();
+					const isMatchingWidth = (baseImageData.width === targetImageData.width);
+					const isMatchingHeight = (baseImageData.height === targetImageData.height);
+					if (!isMatchingWidth || !isMatchingHeight) {
+						reject('Size mismatch');
+						return;
+					}
 					return readDiffData(getBaseImageData(), getTargetImageData())
 						.then(onReadDiffData)
 						.catch(panic);
