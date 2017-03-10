@@ -67,7 +67,7 @@
 						reject('Size mismatch');
 						return;
 					}
-					return readDiffData(getBaseImageData(), getTargetImageData())
+					return readDiffData(baseImageData, targetImageData)
 						.then(onReadDiffData)
 						.catch(panic);
 
