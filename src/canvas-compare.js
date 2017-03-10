@@ -5,9 +5,11 @@
 	exports.canvasCompare = canvasCompare;
 
 	const ERR_NO_PARAMS = 'No params provided';
-	const ERR_NO_IMAGE_URL = 'No imageUrl provided';
+	const ERR_NO_IMAGE_URL = 'No valid imageUrl provided';
 	const ERR_NO_BASE_IMAGE_URL = 'No valid baseImageUrl provided';
+	const ERR_NO_BASE_IMAGE_DATA = 'No valid baseImageData provided';
 	const ERR_NO_TARGET_IMAGE_URL = 'No valid targetImageUrl provided';
+	const ERR_NO_TARGET_IMAGE_DATA = 'No valid targetImageData provided';
 
 	function canvasCompare(params) {
 		const internals = {};
@@ -28,14 +30,59 @@
 		return externals;
 
 		function compare() {
-			const baseImageUrl = getBaseImageUrl();
-			if (!baseImageUrl) {
+			return new Promise(promiseCompare);
+
+			function promiseCompare(resolve, reject) {
+				const baseImageUrl = getBaseImageUrl();
+				if (!baseImageUrl) {
+					reject(ERR_NO_BASE_IMAGE_URL);
+					return;
+				}
+				const targetImageUrl = getTargetImageUrl();
+				if (!targetImageUrl) {
+					reject(ERR_NO_TARGET_IMAGE_URL);
+					return;
+				}
+				readImages(baseImageUrl, targetImageUrl)
+					.then(function (imageDatas) {
+						if (!setBaseImageData(imageDatas[0])) {
+							reject('Failed to set baseImageData');
+							return;
+						}
+						if (!setTargetImageData(imageDatas[1])) {
+							reject('Failed to set targetImageData');
+							return;
+						}
+						resolve(imageDatas);
+					})
+					.catch(panic);
+			}
+		}
+
+		function getTargetImageData() {
+			return internals.targetImageData;
+		}
+
+		function setTargetImageData(targetImageData) {
+			if (!isImageData(targetImageData)) {
+				panic(ERR_NO_TARGET_IMAGE_DATA);
 				return;
 			}
-			const targetImageUrl = getTargetImageUrl();
-			if (!targetImageUrl) {
+			internals.targetImageData = targetImageData;
+			return getTargetImageData();
+		}
+
+		function getBaseImageData() {
+			return internals.baseImageData;
+		}
+
+		function setBaseImageData(baseImageData) {
+			if (!isImageData(baseImageData)) {
+				panic(ERR_NO_BASE_IMAGE_DATA);
 				return;
 			}
+			internals.baseImageData = baseImageData;
+			return getBaseImageData();
 		}
 
 		function getTargetImageUrl() {
@@ -63,6 +110,19 @@
 			internals.baseImageUrl = baseImageUrl;
 			return getBaseImageUrl();
 		}
+	}
+
+	function readImages(baseImageUrl, targetImageUrl) {
+		if (!isNonEmptyString(baseImageUrl)) {
+			return Promise.reject(ERR_NO_BASE_IMAGE_URL);
+		}
+		if (!isNonEmptyString(targetImageUrl)) {
+			return Promise.reject(ERR_NO_TARGET_IMAGE_URL);
+		}
+		return Promise.all([
+			readImage(baseImageUrl),
+			readImage(targetImageUrl)
+		]);
 	}
 
 	function readImage(imageUrl) {
@@ -102,11 +162,6 @@
 
 	// Utility stuff
 
-	function isNonEmptyArray(item) {
-		return (toStringCall(item) === '[object Array]') &&
-			(item.length > 0);
-	}
-
 	function isImageData(item) {
 		return toStringCall(item) === '[object ImageData]';
 	}
@@ -125,7 +180,7 @@
 	}
 
 	function panic(reason) {
-		console.error('canvas-compare: ' + reason);
+		console.error('[canvas-compare] ' + reason);
 	}
 
 })(this);

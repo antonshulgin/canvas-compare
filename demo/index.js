@@ -10,11 +10,11 @@
 			console.log('no canvasCompare');
 			return;
 		}
-		const images = canvasCompare({
+		window.imagesToCompare = canvasCompare({
 			baseImageUrl: './images/base.jpg',
 			targetImageUrl: './images/target.jpg'
 		});
-		console.log(images);
+		console.log(window.imagesToCompare);
 	}
 
 })(this);
