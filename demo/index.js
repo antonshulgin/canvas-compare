@@ -4,7 +4,7 @@
 
 	window.addEventListener('load', init, false);
 
-	const precision = 1;
+	const precision = 0.04;
 
 	function init() {
 		window.imagesToCompare = window.canvasCompare({

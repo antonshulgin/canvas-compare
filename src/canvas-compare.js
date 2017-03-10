@@ -148,7 +148,6 @@
 	// Instance-independent logic
 
 	function readDiffData(baseImageData, targetImageData) {
-		//const timeStart = new Date().getTime();
 		const CHANNEL_R = 0;
 		const CHANNEL_G = 1;
 		const CHANNEL_B = 2;
@@ -178,20 +177,18 @@
 				idxG = CHANNEL_G + idx;
 				idxB = CHANNEL_B + idx;
 				idxA = CHANNEL_A + idx;
-				diff[idxR] = 255 - (baseImageData.data[idxR] - targetImageData.data[idxR]);
-				diff[idxG] = 255 - (baseImageData.data[idxG] - targetImageData.data[idxG]);
-				diff[idxB] = 255 - (baseImageData.data[idxB] - targetImageData.data[idxB]);
+				diff[idxR] = (baseImageData.data[idxR] - targetImageData.data[idxR]);
+				diff[idxG] = (baseImageData.data[idxG] - targetImageData.data[idxG]);
+				diff[idxB] = (baseImageData.data[idxB] - targetImageData.data[idxB]);
 				diff[idxA] = 255; // ignore transparency for now
 			}
 			const diffData = new ImageData(diff, dataWidth, dataHeight);
-			//const timeEnd = new Date().getTime();
-			//console.log({ timeTotal: timeEnd - timeStart });
 			resolve(diffData);
 		}
 	}
 
 	function sanitizePrecision(precision) {
-		const MIN_PRECISION = 0.1;
+		const MIN_PRECISION = 0.01;
 		const MAX_PRECISION = 1;
 		if (!isNumber(precision)) {
 			return MAX_PRECISION;
