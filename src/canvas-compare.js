@@ -176,19 +176,23 @@
 			const dataHeight = baseImageData.height;
 			const diff = new Uint8ClampedArray(dataLength);
 			let idx;
-			let idxR;
-			let idxG;
-			let idxB;
-			let idxA;
+			let idxR, idxG, idxB, idxA;
+			let pixelR, pixelG, pixelB, pixelA;
+			let pixelAverage;
 			for (idx = 0; idx < dataLength; idx += 4) {
 				idxR = CHANNEL_R + idx;
 				idxG = CHANNEL_G + idx;
 				idxB = CHANNEL_B + idx;
 				idxA = CHANNEL_A + idx;
-				diff[idxR] = (baseImageData.data[idxR] - targetImageData.data[idxR]);
-				diff[idxG] = (baseImageData.data[idxG] - targetImageData.data[idxG]);
-				diff[idxB] = (baseImageData.data[idxB] - targetImageData.data[idxB]);
-				diff[idxA] = 255; // ignore transparency for now
+				pixelR = (baseImageData.data[idxR] - targetImageData.data[idxR]);
+				pixelG = (baseImageData.data[idxG] - targetImageData.data[idxG]);
+				pixelB = (baseImageData.data[idxB] - targetImageData.data[idxB]);
+				pixelA = 255; // ignore transparency
+				pixelAverage = (pixelR + pixelG + pixelB) / 3;
+				diff[idxR] = pixelAverage;
+				diff[idxG] = pixelAverage;
+				diff[idxB] = pixelAverage;
+				diff[idxA] = pixelA;
 			}
 			const diffData = new ImageData(diff, dataWidth, dataHeight);
 			resolve(diffData);
