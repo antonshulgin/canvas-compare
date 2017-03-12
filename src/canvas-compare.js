@@ -27,8 +27,10 @@
 			return;
 		}
 		setScale(params.scale);
+		setRounding(params.rounding);
 
 		externals.compare = compare;
+		externals.getDiffData = getDiffData;
 
 		return externals;
 
@@ -77,6 +79,14 @@
 					}
 				}
 			}
+		}
+
+		function getRounding() {
+			return internals.rounding;
+		}
+
+		function setRounding(rounding) {
+			internals.rounding = sanitizeRounding(rounding);
 		}
 
 		function getDiffData() {
@@ -197,6 +207,21 @@
 			const diffData = new ImageData(diff, dataWidth, dataHeight);
 			resolve(diffData);
 		}
+	}
+
+	function sanitizeRounding(rounding) {
+		const MIN_ROUNDING = 0;
+		const MAX_ROUNDING = 255;
+		if (!isNumber(rounding)) {
+			return MIN_ROUNDING;
+		}
+		if (rounding < MIN_ROUNDING) {
+			return MIN_ROUNDING;
+		}
+		if (rounding > MAX_ROUNDING) {
+			return MAX_ROUNDING;
+		}
+		return rounding;
 	}
 
 	function sanitizeScale(scale) {
