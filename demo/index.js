@@ -40,10 +40,12 @@
 			//targetImageUrl: './images/meadow-02.jpg',
 			//baseImageUrl: './images/field-01.jpg',
 			//targetImageUrl: './images/field-02.jpg',
-			baseImageUrl: './images/street-01.jpg',
+			//baseImageUrl: './images/street-01.jpg',
 			//targetImageUrl: './images/street-02.jpg',
 			//baseImageUrl: './images/cat-01.jpg',
-			targetImageUrl: './images/cat-02.jpg',
+			//targetImageUrl: './images/cat-02.jpg',
+			baseImageUrl: './images/whitenoise-01.jpg',
+			targetImageUrl: './images/whitenoise-02.jpg',
 			scale: scale,
 			rounding: rounding
 		};
