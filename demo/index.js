@@ -3,9 +3,9 @@
 	'use strict';
 
 	let scale = 1;
-	let rounding = 0;
+	let threshold = 0;
 	let sliderScale;
-	let sliderRounding;
+	let sliderThreshold;
 
 	const demo = {};
 
@@ -16,15 +16,15 @@
 
 	function onLoad() {
 		sliderScale = document.getElementById('sliderScale');
-		sliderRounding = document.getElementById('sliderRounding');
+		sliderThreshold = document.getElementById('sliderThreshold');
 		update();
 	}
 
 	function update() {
 		scale = parseFloat(sliderScale.value) || 1;
-		rounding = parseFloat(sliderRounding.value) || 0;
+		threshold = parseFloat(sliderThreshold.value) || 0;
 		sliderScale.disabled = true;
-		sliderRounding.disabled = true;
+		sliderThreshold.disabled = true;
 		const params = {
 			//baseImageUrl: './images/base.jpg',
 			//targetImageUrl: './images/target.jpg',
@@ -49,7 +49,7 @@
 			baseImageUrl: './images/ppl-01.jpg',
 			targetImageUrl: './images/ppl-02.jpg',
 			scale: scale,
-			rounding: rounding
+			threshold: threshold
 		};
 		const imagesToCompare = window.canvasCompare(params);
 		imagesToCompare
@@ -85,7 +85,7 @@
 			preview.height = Math.round(height / scale) || 1;
 			preview.style.imageRendering = 'optimizespeed'; // disable interpolation
 			sliderScale.disabled = false;
-			sliderRounding.disabled = false;
+			sliderThreshold.disabled = false;
 
 			imagesToCompare
 				.getDiffPercentage()

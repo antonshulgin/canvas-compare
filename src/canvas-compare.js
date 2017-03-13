@@ -27,7 +27,7 @@
 			return;
 		}
 		setScale(params.scale);
-		setRounding(params.rounding);
+		setThreshold(params.threshold);
 
 		externals.compare = compare;
 		externals.getDiffData = getDiffData;
@@ -47,11 +47,11 @@
 				const dataLength = diffData.data.length;
 				const pixelsTotal = dataLength / 4;
 				const pixelsPercent = pixelsTotal / 100;
-				const rounding = getRounding();
+				const threshold = getThreshold();
 				let diffScore = 0;
 				let idx;
 				for (idx = 0; idx < dataLength; idx += 4) {
-					if (diffData.data[idx] > rounding) {
+					if (diffData.data[idx] > threshold) {
 						diffScore += 1;
 					}
 				}
@@ -116,12 +116,12 @@
 			}
 		}
 
-		function getRounding() {
-			return internals.rounding;
+		function getThreshold() {
+			return internals.threshold;
 		}
 
-		function setRounding(rounding) {
-			internals.rounding = sanitizeRounding(rounding);
+		function setThreshold(threshold) {
+			internals.threshold = sanitizeThreshold(threshold);
 		}
 
 		function getDiffData() {
@@ -244,19 +244,19 @@
 		}
 	}
 
-	function sanitizeRounding(rounding) {
-		const MIN_ROUNDING = 0;
-		const MAX_ROUNDING = 255;
-		if (!isNumber(rounding)) {
-			return MIN_ROUNDING;
+	function sanitizeThreshold(threshold) {
+		const MIN_THRESHOLD = 0;
+		const MAX_THRESHOLD = 255;
+		if (!isNumber(threshold)) {
+			return MIN_THRESHOLD;
 		}
-		if (rounding < MIN_ROUNDING) {
-			return MIN_ROUNDING;
+		if (threshold < MIN_THRESHOLD) {
+			return MIN_THRESHOLD;
 		}
-		if (rounding > MAX_ROUNDING) {
-			return MAX_ROUNDING;
+		if (threshold > MAX_THRESHOLD) {
+			return MAX_THRESHOLD;
 		}
-		return rounding;
+		return threshold;
 	}
 
 	function sanitizeScale(scale) {
