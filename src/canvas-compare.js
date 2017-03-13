@@ -199,8 +199,6 @@
 			const diffPixels = new Uint8ClampedArray(dataLength);
 			let idxR, idxG, idxB, idxA;
 			let pixelR, pixelG, pixelB, pixelA;
-			let pixelAverage;
-			let diffScore = 0;
 			for (let idx = 0; idx < dataLength; idx += 4) {
 				idxR = idx + CHANNEL_R;
 				idxG = idx + CHANNEL_G;
@@ -210,19 +208,14 @@
 				pixelG = baseImagePixels[idxG] - targetImagePixels[idxG];
 				pixelB = baseImagePixels[idxB] - targetImagePixels[idxB];
 				pixelA = baseImagePixels[idxA] - targetImagePixels[idxA];
-				diffPixels[idxR] = pixelR;
-				diffPixels[idxG] = pixelG;
-				diffPixels[idxB] = pixelB;
+				diffPixels[idxR] = (pixelR > threshold) ? pixelR : 0;
+				diffPixels[idxG] = (pixelG > threshold) ? pixelG : 0;
+				diffPixels[idxB] = (pixelB > threshold) ? pixelB : 0;
 				diffPixels[idxA] = 255; // ignore transparency
-				pixelAverage = (pixelR + pixelG + pixelB) / 3;
-				if (pixelAverage > threshold) {
-					diffScore += 1;
-				}
 			}
 			const diffData = new ImageData(diffPixels, imageWidth, imageHeight);
 			resolve({
-				diffData: diffData,
-				diffScore: diffScore
+				diffData: diffData
 			});
 		}
 	}
