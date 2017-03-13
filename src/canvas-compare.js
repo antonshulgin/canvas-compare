@@ -30,41 +30,8 @@
 		setThreshold(params.threshold);
 
 		externals.compare = compare;
-		externals.getDiffData = getDiffData;
-		externals.getDiffPercentage = getDiffPercentage;
 
 		return externals;
-
-		function getDiffPercentage() {
-			return new Promise(onGetDiffPercentage);
-
-			function onGetDiffPercentage(resolve, reject) {
-				const diffData = getDiffData();
-				if (!isImageData(diffData)) {
-					reject(ERR_NO_IMAGE_DATA);
-					return;
-				}
-				const dataLength = diffData.data.length;
-				const pixelsTotal = dataLength / 4;
-				const pixelsPercent = pixelsTotal / 100;
-				const threshold = getThreshold();
-				let diffScore = 0;
-				let idx;
-				for (idx = 0; idx < dataLength; idx += 4) {
-					if (diffData.data[idx] > threshold) {
-						diffScore += 1;
-					}
-				}
-				const diffPercentage = diffScore / pixelsPercent;
-				console.log({
-					diffScore: diffScore,
-					diffPercentage: diffPercentage,
-					pixelsPercent: pixelsPercent,
-					total: pixelsTotal
-				});
-				resolve(diffPercentage);
-			}
-		}
 
 		function compare() {
 			return new Promise(promiseCompare);
@@ -101,16 +68,20 @@
 						reject('Size mismatch');
 						return;
 					}
-					return readDiffData(baseImageData, targetImageData)
+					return readDiffData({
+						baseImageData: baseImageData,
+						targetImageData: targetImageData,
+						threshold: getThreshold()
+					})
 						.then(onReadDiffData)
 						.catch(panic);
 
-					function onReadDiffData(diffData) {
-						setDiffData(diffData);
+					function onReadDiffData(result) {
+						setDiffData(result.diffData);
 						console.log({
 							internals: internals
 						});
-						resolve(getDiffData());
+						resolve(result);
 					}
 				}
 			}
@@ -200,47 +171,59 @@
 
 	// Instance-independent logic
 
-	function readDiffData(baseImageData, targetImageData) {
-		const CHANNEL_R = 0;
-		const CHANNEL_G = 1;
-		const CHANNEL_B = 2;
-		const CHANNEL_A = 3;
+	function readDiffData(params) {
 		return new Promise(promiseReadDiffData);
 
 		function promiseReadDiffData(resolve, reject) {
-			if (!isImageData(baseImageData)) {
-				reject(ERR_NO_BASE_IMAGE_DATA);
-				return;
+			if (!isObject(params)) {
+				return reject(ERR_NO_PARAMS);
 			}
-			if (!isImageData(targetImageData)) {
-				reject(ERR_NO_TARGET_IMAGE_DATA);
-				return;
+			if (!isImageData(params.baseImageData)) {
+				return reject(ERR_NO_BASE_IMAGE_DATA);
 			}
-			const dataLength = baseImageData.data.length;
-			const dataWidth = baseImageData.width;
-			const dataHeight = baseImageData.height;
-			const diff = new Uint8ClampedArray(dataLength);
-			let idx;
+			const baseImageData = params.baseImageData;
+			const baseImagePixels = baseImageData.data;
+			const imageWidth = baseImageData.width;
+			const imageHeight = baseImageData.height;
+			const dataLength = baseImagePixels.length;
+			if (!isImageData(params.targetImageData)) {
+				return reject(ERR_NO_TARGET_IMAGE_DATA);
+			}
+			const targetImageData = params.targetImageData;
+			const targetImagePixels = targetImageData.data;
+			const threshold = sanitizeThreshold(params.threshold);
+			const CHANNEL_R = 0;
+			const CHANNEL_G = 1;
+			const CHANNEL_B = 2;
+			const CHANNEL_A = 3;
+			const diffPixels = new Uint8ClampedArray(dataLength);
 			let idxR, idxG, idxB, idxA;
 			let pixelR, pixelG, pixelB, pixelA;
 			let pixelAverage;
-			for (idx = 0; idx < dataLength; idx += 4) {
-				idxR = CHANNEL_R + idx;
-				idxG = CHANNEL_G + idx;
-				idxB = CHANNEL_B + idx;
-				idxA = CHANNEL_A + idx;
-				pixelR = (baseImageData.data[idxR] - targetImageData.data[idxR]);
-				pixelG = (baseImageData.data[idxG] - targetImageData.data[idxG]);
-				pixelB = (baseImageData.data[idxB] - targetImageData.data[idxB]);
-				pixelA = 255; // ignore transparency
+			let diffScore = 0;
+			for (let idx = 0; idx < dataLength; idx += 4) {
+				idxR = idx + CHANNEL_R;
+				idxG = idx + CHANNEL_G;
+				idxB = idx + CHANNEL_B;
+				idxA = idx + CHANNEL_A;
+				pixelR = baseImagePixels[idxR] - targetImagePixels[idxR];
+				pixelG = baseImagePixels[idxG] - targetImagePixels[idxG];
+				pixelB = baseImagePixels[idxB] - targetImagePixels[idxB];
+				pixelA = baseImagePixels[idxA] - targetImagePixels[idxA];
+				diffPixels[idxR] = pixelR;
+				diffPixels[idxG] = pixelG;
+				diffPixels[idxB] = pixelB;
+				diffPixels[idxA] = 255; // ignore transparency
 				pixelAverage = (pixelR + pixelG + pixelB) / 3;
-				diff[idxR] = pixelAverage;
-				diff[idxG] = pixelAverage;
-				diff[idxB] = pixelAverage;
-				diff[idxA] = pixelA;
+				if (pixelAverage > threshold) {
+					diffScore += 1;
+				}
 			}
-			const diffData = new ImageData(diff, dataWidth, dataHeight);
-			resolve(diffData);
+			const diffData = new ImageData(diffPixels, imageWidth, imageHeight);
+			resolve({
+				diffData: diffData,
+				diffScore: diffScore
+			});
 		}
 	}
 

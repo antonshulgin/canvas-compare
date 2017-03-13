@@ -57,13 +57,9 @@
 			.then(onCompare)
 			.catch(console.error);
 
-		function onGetDiffPercentage(diffPercentage) {
-			const header = document.getElementById('diffPercentage');
-			header.textContent = 'Difference: ' + diffPercentage.toFixed(2) + '%';
-		}
-
-		function onCompare() {
-			const diffData = imagesToCompare.getDiffData();
+		function onCompare(result) {
+			console.log({ result: result });
+			const diffData = result.diffData;
 			const width = diffData.width;
 			const height = diffData.height;
 
@@ -86,11 +82,6 @@
 			preview.style.imageRendering = 'optimizespeed'; // disable interpolation
 			sliderScale.disabled = false;
 			sliderThreshold.disabled = false;
-
-			imagesToCompare
-				.getDiffPercentage()
-				.then(onGetDiffPercentage)
-				.catch(console.log);
 		}
 	}
 
