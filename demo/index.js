@@ -44,8 +44,10 @@
 			//targetImageUrl: './images/street-02.jpg',
 			//baseImageUrl: './images/cat-01.jpg',
 			//targetImageUrl: './images/cat-02.jpg',
-			baseImageUrl: './images/whitenoise-01.jpg',
-			targetImageUrl: './images/whitenoise-02.jpg',
+			//baseImageUrl: './images/whitenoise-01.jpg',
+			//targetImageUrl: './images/whitenoise-02.jpg',
+			baseImageUrl: './images/ppl-01.jpg',
+			targetImageUrl: './images/ppl-02.jpg',
 			scale: scale,
 			rounding: rounding
 		};
