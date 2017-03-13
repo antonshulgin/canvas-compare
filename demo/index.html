@@ -10,17 +10,17 @@
 		<div id="root">
 			<h1 id="diffPercentage"></h1>
 			<div>
-				<img src="./images/base.jpg" alt="base">
+				<img id="baseImage" src="#" alt="base">
 				<img id="preview" src="#" alt="diff">
-				<img src="./images/target.jpg" alt="target">
+				<img id="targetImage" src="$" alt="target">
 			</div>
 			<div>
 				<label>Adjust scale: </label>
-				<input id="sliderScale" type="range" step="0.05" min="0.05" max="1" onchange="demo.update()">
+				<input id="sliderScale" type="range" value="1" step="0.05" min="0.05" max="1" onchange="demo.update()">
 			</div>
 			<div>
 				<label>Adjust rounding: </label>
-				<input id="sliderRounding" type="range" step="1" min="0" max="255" onchange="demo.update()">
+				<input id="sliderRounding" type="range" value="0" step="1" min="0" max="255" onchange="demo.update()">
 			</div>
 		</div>
 		<script src="../src/canvas-compare.js"></script>

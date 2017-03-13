@@ -61,7 +61,7 @@
 					dataPercent: dataPercent,
 					total: dataLength / 4
 				});
-				resolve(diffScore);
+				resolve(diffPercentage);
 			}
 		}
 
