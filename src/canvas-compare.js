@@ -31,8 +31,39 @@
 
 		externals.compare = compare;
 		externals.getDiffData = getDiffData;
+		externals.getDiffPercentage = getDiffPercentage;
 
 		return externals;
+
+		function getDiffPercentage() {
+			return new Promise(onGetDiffPercentage);
+
+			function onGetDiffPercentage(resolve, reject) {
+				const diffData = getDiffData();
+				if (!isImageData(diffData)) {
+					reject(ERR_NO_IMAGE_DATA);
+					return;
+				}
+				const dataLength = diffData.data.length;
+				const dataPercent = (dataLength / 4) / 100;
+				const rounding = getRounding();
+				let diffScore = 0;
+				let idx;
+				for (idx = 0; idx < dataLength; idx += 4) {
+					if (diffData.data[idx] > rounding) {
+						diffScore += 1;
+					}
+				}
+				const diffPercentage = diffScore / dataPercent;
+				console.log({
+					diffScore: diffScore,
+					diffPercentage: diffPercentage,
+					dataPercent: dataPercent,
+					total: dataLength / 4
+				});
+				resolve(diffScore);
+			}
+		}
 
 		function compare() {
 			return new Promise(promiseCompare);
@@ -75,6 +106,9 @@
 
 					function onReadDiffData(diffData) {
 						setDiffData(diffData);
+						console.log({
+							internals: internals
+						});
 						resolve(getDiffData());
 					}
 				}

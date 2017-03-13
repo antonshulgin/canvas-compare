@@ -27,6 +27,7 @@
 		sliderRounding.disabled = true;
 		const imagesToCompare = window.canvasCompare({
 			baseImageUrl: './images/base.jpg',
+			//targetImageUrl: './images/base.jpg',
 			targetImageUrl: './images/target.jpg',
 			scale: scale,
 			rounding: rounding
@@ -35,6 +36,11 @@
 			.compare()
 			.then(onCompare)
 			.catch(console.error);
+
+		function onGetDiffPercentage(diffPercentage) {
+			const header = document.getElementById('diffPercentage');
+			header.textContent = diffPercentage;
+		}
 
 		function onCompare() {
 			const diffData = imagesToCompare.getDiffData();
@@ -55,6 +61,11 @@
 			preview.style.imageRendering = 'optimizespeed'; // disable interpolation
 			sliderScale.disabled = false;
 			sliderRounding.disabled = false;
+
+			imagesToCompare
+				.getDiffPercentage()
+				.then(onGetDiffPercentage)
+				.catch(console.log);
 		}
 	}
 
