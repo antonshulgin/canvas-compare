@@ -45,7 +45,8 @@
 					return;
 				}
 				const dataLength = diffData.data.length;
-				const dataPercent = (dataLength / 4) / 100;
+				const pixelsTotal = dataLength / 4;
+				const pixelsPercent = pixelsTotal / 100;
 				const rounding = getRounding();
 				let diffScore = 0;
 				let idx;
@@ -54,12 +55,12 @@
 						diffScore += 1;
 					}
 				}
-				const diffPercentage = diffScore / dataPercent;
+				const diffPercentage = diffScore / pixelsPercent;
 				console.log({
 					diffScore: diffScore,
 					diffPercentage: diffPercentage,
-					dataPercent: dataPercent,
-					total: dataLength / 4
+					pixelsPercent: pixelsPercent,
+					total: pixelsTotal
 				});
 				resolve(diffPercentage);
 			}
