@@ -127,10 +127,9 @@
 
 		function producePreview(isNormalized) {
 			const image = isNormalized ? getNormalizedImage() : getImage();
-			const canvas = document.createElement('canvas');
-			const scale = instance.getScale();
 			const width = image.width;
 			const height = image.height;
+			const canvas = document.createElement('canvas');
 			canvas.width = width;
 			canvas.height = height;
 			const context = canvas.getContext('2d');
@@ -139,6 +138,7 @@
 			imageElement.src = canvas.toDataURL();
 			imageElement.style.imageRendering = 'optimizespeed';
 			imageElement.style.imageRendering = '-webkit-optimize-contrast';
+			const scale = instance.getScale();
 			imageElement.width = Math.round(width / scale);
 			imageElement.height = Math.round(height / scale);
 			return imageElement;
