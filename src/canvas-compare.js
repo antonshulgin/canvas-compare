@@ -25,37 +25,46 @@
 	// Instance-independent logic
 
 	function compare(instance) {
-		const baseImage = instance.getBaseImage();
-		const targetImage = instance.getTargetImage();
-		const isSameWidth = (baseImage.width === targetImage.width);
-		const isSameHeight = (baseImage.height === targetImage.height);
-		if (!isSameWidth || !isSameHeight) {
-			return Promise.reject('Image size mismatch');
+		return new Promise(promiseCompare);
+
+		function promiseCompare(resolve, reject) {
+			const baseImage = instance.getBaseImage();
+			const targetImage = instance.getTargetImage();
+			const isSameWidth = (baseImage.width === targetImage.width);
+			const isSameHeight = (baseImage.height === targetImage.height);
+			if (!isSameWidth || !isSameHeight) {
+				reject('Image size mismatch');
+				return;
+			}
+			const baseData = baseImage.data;
+			const targetData = targetImage.data;
+			const dataLength = baseData.length;
+			const threshold = instance.getThreshold();
+			const diffData = new Uint8ClampedArray(dataLength);
+			let idxR, idxG, idxB, idxA;
+			let diffR, diffG, diffB;
+			for (let idx = 0; idx < dataLength; idx += 4) {
+				idxR = idx + 0;
+				idxG = idx + 1;
+				idxB = idx + 2;
+				idxA = idx + 3;
+				diffR = Math.abs(baseData[idxR] - targetData[idxR]);
+				diffG = Math.abs(baseData[idxG] - targetData[idxG]);
+				diffB = Math.abs(baseData[idxB] - targetData[idxB]);
+				diffData[idxR] = applyThreshold(diffR, threshold);
+				diffData[idxG] = applyThreshold(diffG, threshold);
+				diffData[idxB] = applyThreshold(diffB, threshold);
+				diffData[idxA] = 255;
+			}
+			const width = baseImage.width;
+			const height = baseImage.height;
+			const diffImage = new ImageData(diffData, width, height);
+			resolve(produceDiffResult(diffImage));
 		}
-		const width = baseImage.width;
-		const height = baseImage.height;
-		const baseData = baseImage.data;
-		const targetData = targetImage.data;
-		const dataLength = baseData.length;
-		const threshold = instance.getThreshold();
-		const diffData = new Uint8ClampedArray(dataLength);
-		let idxR, idxG, idxB, idxA;
-		let diffR, diffG, diffB;
-		for (let idx = 0; idx < dataLength; idx += 4) {
-			idxR = idx + 0;
-			idxG = idx + 1;
-			idxB = idx + 2;
-			idxA = idx + 3;
-			diffR = Math.abs(baseData[idxR] - targetData[idxR]);
-			diffG = Math.abs(baseData[idxG] - targetData[idxG]);
-			diffB = Math.abs(baseData[idxB] - targetData[idxB]);
-			diffData[idxR] = (diffR > threshold) ? diffR : 0;
-			diffData[idxG] = (diffG > threshold) ? diffG : 0;
-			diffData[idxB] = (diffB > threshold) ? diffB : 0;
-			diffData[idxA] = 255;
-		}
-		const diffImage = new ImageData(diffData, width, height);
-		return Promise.resolve(diffImage);
+	}
+
+	function applyThreshold(value, threshold) {
+		return (value > threshold) ? value : 0;
 	}
 
 	function readImages(instance) {
@@ -96,6 +105,12 @@
 				reject('Failed to load `' + imageUrl + '`');
 			}
 		}
+	}
+
+	// Result logic
+	
+	function produceDiffResult(diffImage) {
+		return diffImage;
 	}
 
 	// Instance logic
@@ -207,7 +222,7 @@
 	}
 
 	function sanitizeScale(scale) {
-		const MIN_SCALE = 0.1;
+		const MIN_SCALE = 0.01;
 		const MAX_SCALE = 1;
 		if (!isNumber(scale)) {
 			return MAX_SCALE;
