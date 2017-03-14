@@ -25,27 +25,27 @@ promiseCompare.catch(function (reason) {
 
 ## Parameters
 
-### baseImageUrl
+### params.baseImageUrl
 
 Non-empty string, required.
 
-### targetImageUrl
+### params.targetImageUrl
 
 Non-empty string, required.
 
-### scale
+### params.scale
 
 Float number between `0.01` and `1`, optional, defaults to `1`.
 
 The lower the value, the smaller the resulting diff. Might be helpful when dealing with large images.
 
-### threshold
+### params.threshold
 
 Integer between `0` and `255`, optional, defaults to `0`.
 
 If the passed value is greater than `threshold`, it drops to `0`. Useful to filter out noise and adjust overall sensitivity.
 
-### isNormalized
+### params.isNormalized
 
 Boolean, optional, defaults to `false`.
 
@@ -58,7 +58,7 @@ The `result` object is returned when the promise is resolved. It consists of a b
 
 ### result.getImage(isNormalized)
 
-Returns `ImageData` with a diff.
+Returns `ImageData` with the diff.
 
 ### result.getPixels()
 
