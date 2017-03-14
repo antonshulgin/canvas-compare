@@ -54,7 +54,8 @@
 			baseImageUrl: './images/ppl-01.jpg',
 			targetImageUrl: './images/ppl-02.jpg',
 			scale: scale,
-			threshold: threshold
+			threshold: threshold,
+			isNormalized: isNormalized
 		};
 
 		window.canvasCompare(params)
@@ -82,7 +83,7 @@
 			const context = canvas.getContext('2d');
 			context.putImageData(diffImage, 0, 0);
 
-			const preview = result.producePreview(isNormalized);
+			const preview = result.producePreview();
 			const previewContainer = document.getElementById('preview');
 			previewContainer.innerHTML = '';
 			previewContainer.appendChild(preview);

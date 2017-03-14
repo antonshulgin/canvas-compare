@@ -32,6 +32,7 @@
 		function promiseCompare(resolve, reject) {
 			const baseImage = instance.getBaseImage();
 			const targetImage = instance.getTargetImage();
+			const isNormalized = instance.isNormalized();
 			const isSameWidth = (baseImage.width === targetImage.width);
 			const isSameHeight = (baseImage.height === targetImage.height);
 			if (!isSameWidth || !isSameHeight) {
@@ -52,9 +53,9 @@
 				diffR = Math.abs(baseData[idxR] - targetData[idxR]);
 				diffG = Math.abs(baseData[idxG] - targetData[idxG]);
 				diffB = Math.abs(baseData[idxB] - targetData[idxB]);
-				diffData[idxR] = applyThreshold(diffR, threshold);
-				diffData[idxG] = applyThreshold(diffG, threshold);
-				diffData[idxB] = applyThreshold(diffB, threshold);
+				diffData[idxR] = applyNormalization(applyThreshold(diffR, threshold), isNormalized);
+				diffData[idxG] = applyNormalization(applyThreshold(diffG, threshold), isNormalized);
+				diffData[idxB] = applyNormalization(applyThreshold(diffB, threshold), isNormalized);
 				diffData[idxA] = 255;
 			}
 			const width = baseImage.width;
@@ -62,6 +63,13 @@
 			const diffImage = new ImageData(diffData, width, height);
 			return resolve(produceDiffResult(diffImage, instance));
 		}
+	}
+
+	function applyNormalization(value, isNormalized) {
+		if (!isNormalized) {
+			return value;
+		}
+		return (value > 0) ? 255 : 0;
 	}
 
 	function applyThreshold(value, threshold) {
@@ -117,15 +125,14 @@
 		if (!setImage(diffImage)) { return; }
 
 		externals.getImage = getImage;
-		externals.getNormalizedImage = getNormalizedImage;
 		externals.getPixels = getPixels;
 		externals.getPercentage = getPercentage;
 		externals.producePreview = producePreview;
 
 		return externals;
 
-		function producePreview(isNormalized) {
-			const image = isNormalized ? getNormalizedImage() : getImage();
+		function producePreview() {
+			const image = getImage();
 			const width = image.width;
 			const height = image.height;
 			const canvas = document.createElement('canvas');
@@ -168,28 +175,6 @@
 			return pixels;
 		}
 
-		function getNormalizedImage() {
-			const image = getImage();
-			const data = image.data;
-			const dataLength = data.length;
-			const normalizedData = new Uint8ClampedArray(dataLength);
-			let idxR, idxG, idxB, idxA;
-			for (let idx = 0; idx < dataLength; idx += 4) {
-				idxR = idx + 0;
-				idxG = idx + 1;
-				idxB = idx + 2;
-				idxA = idx + 3;
-				normalizedData[idxR] = data[idxR] ? 255 : 0;
-				normalizedData[idxG] = data[idxG] ? 255 : 0;
-				normalizedData[idxB] = data[idxB] ? 255 : 0;
-				normalizedData[idxA] = 255;
-			}
-			const width = image.width;
-			const height = image.height;
-			const normalizedImage = new ImageData(normalizedData, width, height);
-			return normalizedImage;
-		}
-
 		function getImage() {
 			return internals.image;
 		}
@@ -217,6 +202,7 @@
 
 		setScale(params.scale);
 		setThreshold(params.threshold);
+		setNormalized(params.isNormalized);
 
 		externals.getTargetImageUrl = getTargetImageUrl;
 		externals.getBaseImageUrl = getBaseImageUrl;
@@ -226,6 +212,9 @@
 		externals.getBaseImage = getBaseImage;
 		externals.setTargetImage = setTargetImage;
 		externals.getTargetImage = getTargetImage;
+		externals.isNormalized = isNormalized;
+
+		console.log(internals);
 
 		return externals;
 
@@ -279,6 +268,14 @@
 
 		function getThreshold() {
 			return internals.threshold;
+		}
+
+		function isNormalized() {
+			return internals.isNormalized;
+		}
+
+		function setNormalized(isNormalized) {
+			internals.isNormalized = !!isNormalized;
 		}
 
 		function setThreshold(threshold) {
