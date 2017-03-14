@@ -32,7 +32,6 @@
 		function promiseCompare(resolve, reject) {
 			const baseImage = instance.getBaseImage();
 			const targetImage = instance.getTargetImage();
-			const isNormalized = instance.isNormalized();
 			const isSameWidth = (baseImage.width === targetImage.width);
 			const isSameHeight = (baseImage.height === targetImage.height);
 			if (!isSameWidth || !isSameHeight) {
@@ -41,7 +40,6 @@
 			const baseData = baseImage.data;
 			const targetData = targetImage.data;
 			const dataLength = baseData.length;
-			const threshold = instance.getThreshold();
 			const diffData = new Uint8ClampedArray(dataLength);
 			let idxR, idxG, idxB, idxA;
 			let diffR, diffG, diffB;
@@ -53,9 +51,9 @@
 				diffR = Math.abs(baseData[idxR] - targetData[idxR]);
 				diffG = Math.abs(baseData[idxG] - targetData[idxG]);
 				diffB = Math.abs(baseData[idxB] - targetData[idxB]);
-				diffData[idxR] = applyNormalization(applyThreshold(diffR, threshold), isNormalized);
-				diffData[idxG] = applyNormalization(applyThreshold(diffG, threshold), isNormalized);
-				diffData[idxB] = applyNormalization(applyThreshold(diffB, threshold), isNormalized);
+				diffData[idxR] = applyAdjustments(diffR, instance);
+				diffData[idxG] = applyAdjustments(diffG, instance);
+				diffData[idxB] = applyAdjustments(diffB, instance);
 				diffData[idxA] = 255;
 			}
 			const width = baseImage.width;
@@ -63,6 +61,13 @@
 			const diffImage = new ImageData(diffData, width, height);
 			return resolve(produceDiffResult(diffImage, instance));
 		}
+	}
+
+	function applyAdjustments(value, instance) {
+		let adjustedValue = value;
+		adjustedValue = applyThreshold(adjustedValue, instance.getThreshold());
+		adjustedValue = applyNormalization(adjustedValue, instance.isNormalized());
+		return adjustedValue;
 	}
 
 	function applyNormalization(value, isNormalized) {
@@ -213,8 +218,6 @@
 		externals.setTargetImage = setTargetImage;
 		externals.getTargetImage = getTargetImage;
 		externals.isNormalized = isNormalized;
-
-		console.log(internals);
 
 		return externals;
 
