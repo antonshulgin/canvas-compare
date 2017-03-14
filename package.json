@@ -5,10 +5,11 @@
   "main": "src/canvas-compare.js",
   "scripts": {
     "start": "npm run build",
-    "build": "npm run reset-dist && npm run uglify",
+    "build": "npm run reset-dist && npm run uglify && npm run update-demo",
     "reset-dist": "rm -rf ./dist/ && mkdir ./dist/",
     "uglify": "uglifyjs ./src/canvas-compare.js --compress --mangle --output=./dist/canvas-compare.min.js",
-    "version-bump-patch": "npm version major"
+    "version-bump": "npm version major",
+		"update-demo": "cp ./dist/canvas-compare.min.js ./docs/"
   },
   "repository": {
     "type": "git",
@@ -16,10 +17,12 @@
   },
   "keywords": [
     "canvas-compare",
+    "canvas-diff",
     "image-compare",
+    "image-diff",
     "canvas",
-    "diff",
-    "compare"
+    "compare",
+		"diff"
   ],
   "files": [
     "src/canvas-compare.js",
