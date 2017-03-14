@@ -44,7 +44,7 @@ The lower the value, the smaller the resulting diff. Might be helpful when deali
 
 Integer between `0` and `255`, optional, defaults to `0`.
 
-If the passed value is greater than `threshold`, it drops to `0`. Useful to filter out noise and adjust overall sensitivity.
+If the passed value is lower than `threshold`, it drops to `0`. Useful to filter out noise and adjust overall sensitivity.
 
 ### params.isNormalized
 
