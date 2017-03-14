@@ -138,6 +138,7 @@
 			const imageElement = new Image();
 			imageElement.src = canvas.toDataURL();
 			imageElement.style.imageRendering = 'optimizespeed';
+			imageElement.style.imageRendering = '-webkit-optimize-contrast';
 			imageElement.width = Math.round(width / scale);
 			imageElement.height = Math.round(height / scale);
 			return imageElement;
