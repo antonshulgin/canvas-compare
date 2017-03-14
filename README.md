@@ -2,6 +2,7 @@
 
 Compare two images to get their by-pixel diff, similarity percentage and stuff.
 
+
 ## Usage
 
 ```javascript
@@ -45,7 +46,7 @@ Integer between `0` and `255`, optional, defaults to `0`.
 
 If the passed value is greater than `threshold`, it drops to `0`. Useful to filter out noise and adjust overall sensitivity.
 
-### params.isNormalized
+### params.isNormalized (Not implemented)
 
 Boolean, optional, defaults to `false`.
 
