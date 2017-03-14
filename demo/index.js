@@ -28,8 +28,6 @@
 		const params = {
 			//baseImageUrl: './images/base.jpg',
 			//targetImageUrl: './images/target.jpg',
-			//baseImageUrl: './images/001.png',
-			//targetImageUrl: './images/002.png',
 			//baseImageUrl: './images/1p-01.png',
 			//targetImageUrl: './images/1p-02.png',
 			//baseImageUrl: './images/tri-01.png',
@@ -42,12 +40,12 @@
 			//targetImageUrl: './images/field-02.jpg',
 			//baseImageUrl: './images/street-01.jpg',
 			//targetImageUrl: './images/street-02.jpg',
-			baseImageUrl: './images/cat-01.jpg',
-			targetImageUrl: './images/cat-02.jpg',
+			//baseImageUrl: './images/cat-01.jpg',
+			//targetImageUrl: './images/cat-02.jpg',
 			//baseImageUrl: './images/whitenoise-01.jpg',
 			//targetImageUrl: './images/whitenoise-02.jpg',
-			//baseImageUrl: './images/ppl-01.jpg',
-			//targetImageUrl: './images/ppl-02.jpg',
+			baseImageUrl: './images/ppl-01.jpg',
+			targetImageUrl: './images/ppl-02.jpg',
 			scale: scale,
 			threshold: threshold
 		};

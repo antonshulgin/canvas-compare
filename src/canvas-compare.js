@@ -198,26 +198,37 @@
 			const CHANNEL_A = 3;
 			const diffPixels = new Uint8ClampedArray(dataLength);
 			let idxR, idxG, idxB, idxA;
-			let pixelR, pixelG, pixelB, pixelA;
+			let diffR, diffG, diffB, diffA;
+			let diffScore = 0;
 			for (let idx = 0; idx < dataLength; idx += 4) {
 				idxR = idx + CHANNEL_R;
 				idxG = idx + CHANNEL_G;
 				idxB = idx + CHANNEL_B;
 				idxA = idx + CHANNEL_A;
-				pixelR = baseImagePixels[idxR] - targetImagePixels[idxR];
-				pixelG = baseImagePixels[idxG] - targetImagePixels[idxG];
-				pixelB = baseImagePixels[idxB] - targetImagePixels[idxB];
-				pixelA = baseImagePixels[idxA] - targetImagePixels[idxA];
-				diffPixels[idxR] = (pixelR > threshold) ? pixelR : 0;
-				diffPixels[idxG] = (pixelG > threshold) ? pixelG : 0;
-				diffPixels[idxB] = (pixelB > threshold) ? pixelB : 0;
+				diffR = Math.abs(baseImagePixels[idxR] - targetImagePixels[idxR]);
+				diffG = Math.abs(baseImagePixels[idxG] - targetImagePixels[idxG]);
+				diffB = Math.abs(baseImagePixels[idxB] - targetImagePixels[idxB]);
+				diffA = Math.abs(baseImagePixels[idxA] - targetImagePixels[idxA]);
+				diffPixels[idxR] = (diffR > threshold) ? diffR : 0;
+				diffPixels[idxG] = (diffG > threshold) ? diffG : 0;
+				diffPixels[idxB] = (diffB > threshold) ? diffB : 0;
 				diffPixels[idxA] = 255; // ignore transparency
+				if (diffPixels[idxR] || diffPixels[idxG] || diffPixels[idxB]) {
+					diffScore += 1;
+				}
 			}
 			const diffData = new ImageData(diffPixels, imageWidth, imageHeight);
 			resolve({
-				diffData: diffData
+				diffData: diffData,
+				diffScore: diffScore,
+				diffPercentage: toPercentage(diffScore, (dataLength / 4))
 			});
 		}
+	}
+
+	function toPercentage(diffScore, totalPixels) {
+		const percent = totalPixels / 100;
+		return diffScore / percent;
 	}
 
 	function sanitizeThreshold(threshold) {
