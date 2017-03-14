@@ -14,7 +14,7 @@ const promiseCompare = canvasCompare({
 	isNormalized: true // Boolean, optional, defaults to false
 });
 
-promiseCompare.then(function(result) {
+promiseCompare.then(function (result) {
 	// Do things with result
 });
 
