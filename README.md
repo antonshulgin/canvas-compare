@@ -72,3 +72,7 @@ Returns percentage of non-zero-value pixels in the diff.
 ### result.producePreview()
 
 Returns an `<img>` element with the diff representation.
+
+### result.getExecutionTime()
+
+Returns execution time in milliseconds.
