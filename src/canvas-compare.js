@@ -97,6 +97,7 @@
 				const imageData = context.getImageData(0, 0, width, height);
 				if (!isImageData(imageData)) {
 					reject('Failed to extract ImageData from `' + imageUrl + '`');
+					return;
 				}
 				resolve(imageData);
 			}
