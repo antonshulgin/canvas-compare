@@ -50,15 +50,14 @@
 			threshold: threshold
 		};
 		const imagesToCompare = window.canvasCompare(params);
-		//imagesToCompare
-			//.compare()
-			//.then(onCompare)
-			//.catch(console.error);
+		imagesToCompare
+			.then(onCompare)
+			.catch(console.error);
 		window.imagesToCompare = imagesToCompare;
 
 		function onCompare(result) {
 			console.log({ result: result });
-			const diffData = result.diffData;
+			const diffData = result;
 			const width = diffData.width;
 			const height = diffData.height;
 
