@@ -9,7 +9,9 @@
 	function canvasCompare(params) {
 		const instance = produceInstance(params);
 
-		if (!instance) { return; }
+		if (!instance) {
+			return Promise.reject('Failed to instantiate');
+		}
 
 		return readImages(instance)
 			.then(onReadImages)
@@ -33,8 +35,7 @@
 			const isSameWidth = (baseImage.width === targetImage.width);
 			const isSameHeight = (baseImage.height === targetImage.height);
 			if (!isSameWidth || !isSameHeight) {
-				reject('Image size mismatch');
-				return;
+				return reject('Image size mismatch');
 			}
 			const baseData = baseImage.data;
 			const targetData = targetImage.data;
@@ -59,8 +60,7 @@
 			const width = baseImage.width;
 			const height = baseImage.height;
 			const diffImage = new ImageData(diffData, width, height);
-			console.log(instance);
-			resolve(produceDiffResult(diffImage, instance));
+			return resolve(produceDiffResult(diffImage, instance));
 		}
 	}
 
@@ -97,14 +97,13 @@
 				context.drawImage(image, 0, 0, width, height);
 				const imageData = context.getImageData(0, 0, width, height);
 				if (!isImageData(imageData)) {
-					reject('Failed to extract ImageData from `' + imageUrl + '`');
-					return;
+					return reject('Failed to extract ImageData from `' + imageUrl + '`');
 				}
-				resolve(imageData);
+				return resolve(imageData);
 			}
 
 			function onError() {
-				reject('Failed to load `' + imageUrl + '`');
+				return reject('Failed to load `' + imageUrl + '`');
 			}
 		}
 	}
