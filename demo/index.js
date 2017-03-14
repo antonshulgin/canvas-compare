@@ -27,7 +27,6 @@
 		scale = parseFloat(sliderScale.value) || 1;
 		threshold = parseFloat(sliderThreshold.value) || 0;
 		isNormalized = checkboxIsNormalized.checked;
-		console.log(checkboxIsNormalized);
 
 		sliderScale.disabled = true;
 		sliderThreshold.disabled = true;
@@ -67,8 +66,8 @@
 			const width = diffImage.width;
 			const height = diffImage.height;
 
-			console.log('pixels', result.getPixels());
-			console.log('percentage', result.getPercentage().toFixed(2) + '%');
+			const heading = document.getElementById('headingPercentage');
+			heading.textContent = 'Difference: ' + result.getPercentage().toFixed(2) + '%';
 
 			const baseImage = document.getElementById('baseImage');
 			baseImage.src = params.baseImageUrl;

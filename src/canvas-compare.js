@@ -155,17 +155,17 @@
 			const image = getImage();
 			const data = image.data;
 			const dataLength = data.length;
-			let score = 0;
+			let pixels = 0;
 			let idxR, idxG, idxB;
 			for (let idx = 0; idx < dataLength; idx += 4) {
 				idxR = idx + 0;
 				idxG = idx + 1;
 				idxB = idx + 2;
 				if (data[idxR] || data[idxG] || data[idxB]) {
-					score += 1;
+					pixels += 1;
 				}
 			}
-			return score;
+			return pixels;
 		}
 
 		function getNormalizedImage() {
