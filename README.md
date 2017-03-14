@@ -46,7 +46,7 @@ Integer between `0` and `255`, optional, defaults to `0`.
 
 If the passed value is greater than `threshold`, it drops to `0`. Useful to filter out noise and adjust overall sensitivity.
 
-### params.isNormalized (Not implemented)
+### params.isNormalized
 
 Boolean, optional, defaults to `false`.
 
@@ -57,7 +57,7 @@ If the passed value is not a zero, it's set to `255`. In short all the values in
 
 The `result` object is returned when the promise is resolved. It consists of a bunch of getters:
 
-### result.getImage(isNormalized)
+### result.getImage()
 
 Returns `ImageData` with the diff.
 
