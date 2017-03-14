@@ -159,6 +159,7 @@
 			const imageElement = new Image();
 			imageElement.src = canvas.toDataURL();
 			imageElement.style.imageRendering = 'optimizespeed';
+			imageElement.style.imageRendering = 'pixelated';
 			imageElement.style.imageRendering = '-webkit-optimize-contrast';
 			const scale = instance.getScale();
 			imageElement.width = Math.round(width / scale);
