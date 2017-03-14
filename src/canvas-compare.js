@@ -133,8 +133,19 @@
 		externals.getPixels = getPixels;
 		externals.getPercentage = getPercentage;
 		externals.producePreview = producePreview;
+		externals.getExecutionTime = getExecutionTime;
+
+		setExecutionTime(instance.getTimestamp());
 
 		return externals;
+
+		function getExecutionTime() {
+			return internals.executionTime;
+		}
+
+		function setExecutionTime(startDate) {
+			internals.executionTime = (new Date()) - startDate;
+		}
 
 		function producePreview() {
 			const image = getImage();
@@ -205,6 +216,7 @@
 		if (!setBaseImageUrl(params.baseImageUrl)) { return; }
 		if (!setTargetImageUrl(params.targetImageUrl)) { return; }
 
+		setTimestamp();
 		setScale(params.scale);
 		setThreshold(params.threshold);
 		setNormalized(params.isNormalized);
@@ -218,8 +230,17 @@
 		externals.setTargetImage = setTargetImage;
 		externals.getTargetImage = getTargetImage;
 		externals.isNormalized = isNormalized;
+		externals.getTimestamp = getTimestamp;
 
 		return externals;
+
+		function getTimestamp() {
+			return internals.timestamp;
+		}
+
+		function setTimestamp() {
+			internals.timestamp = new Date();
+		}
 
 		function getTargetImage() {
 			return internals.targetImage;

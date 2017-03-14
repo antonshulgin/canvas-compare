@@ -33,8 +33,8 @@
 		checkboxIsNormalized.disabled = false;
 
 		const params = {
-			//baseImageUrl: './images/base.jpg',
-			//targetImageUrl: './images/target.jpg',
+			baseImageUrl: './images/base.jpg',
+			targetImageUrl: './images/target.jpg',
 			//baseImageUrl: './images/1p-01.png',
 			//targetImageUrl: './images/1p-02.png',
 			//baseImageUrl: './images/tri-01.png',
@@ -51,8 +51,10 @@
 			//targetImageUrl: './images/cat-02.jpg',
 			//baseImageUrl: './images/whitenoise-01.jpg',
 			//targetImageUrl: './images/whitenoise-02.jpg',
-			baseImageUrl: './images/ppl-01.jpg',
-			targetImageUrl: './images/ppl-02.jpg',
+			//baseImageUrl: './images/ppl-01.jpg',
+			//targetImageUrl: './images/ppl-02.jpg',
+			//baseImageUrl: './images/ls-01.png',
+			//targetImageUrl: './images/ls-02.png',
 			scale: scale,
 			threshold: threshold,
 			isNormalized: isNormalized
@@ -91,6 +93,10 @@
 			sliderScale.disabled = false;
 			sliderThreshold.disabled = false;
 			checkboxIsNormalized.disabled = false;
+
+			console.log({
+				executionTime: result.getExecutionTime()
+			});
 		}
 	}
 
