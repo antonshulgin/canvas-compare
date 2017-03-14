@@ -5,7 +5,7 @@
   "main": "src/canvas-compare.js",
   "scripts": {
     "start": "npm run build",
-    "build": "npm run version-bump-patch && npm run reset-dist && npm run uglify && npm test",
+    "build": "npm run reset-dist && npm run uglify",
     "reset-dist": "rm -rf ./dist/ && mkdir ./dist/",
     "uglify": "uglifyjs ./src/canvas-compare.js --compress --mangle --output=./dist/canvas-compare.min.js",
     "test": "mocha ./test/everything.js",

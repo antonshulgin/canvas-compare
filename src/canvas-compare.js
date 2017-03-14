@@ -41,9 +41,9 @@
 			const targetData = targetImage.data;
 			const dataLength = baseData.length;
 			const diffData = new Uint8ClampedArray(dataLength);
-			let idxR, idxG, idxB, idxA;
-			let diffR, diffG, diffB;
-			for (let idx = 0; idx < dataLength; idx += 4) {
+			var idxR, idxG, idxB, idxA;
+			var diffR, diffG, diffB;
+			for (var idx = 0; idx < dataLength; idx += 4) {
 				idxR = idx + 0;
 				idxG = idx + 1;
 				idxB = idx + 2;
@@ -64,7 +64,7 @@
 	}
 
 	function applyAdjustments(value, instance) {
-		let adjustedValue = value;
+		var adjustedValue = value;
 		adjustedValue = applyThreshold(adjustedValue, instance.getThreshold());
 		adjustedValue = applyNormalization(adjustedValue, instance.isNormalized());
 		return adjustedValue;
@@ -178,9 +178,9 @@
 			const image = getImage();
 			const data = image.data;
 			const dataLength = data.length;
-			let pixels = 0;
-			let idxR, idxG, idxB;
-			for (let idx = 0; idx < dataLength; idx += 4) {
+			var pixels = 0;
+			var idxR, idxG, idxB;
+			for (var idx = 0; idx < dataLength; idx += 4) {
 				idxR = idx + 0;
 				idxG = idx + 1;
 				idxB = idx + 2;
