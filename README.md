@@ -2,7 +2,7 @@
 
 Compare two images to get their by-pixel diff, similarity percentage and stuff.
 
-# Usage
+## Usage
 
 ```javascript
 const promiseCompare = canvasCompare({
@@ -22,19 +22,21 @@ promiseCompare.catch(function (reason) {
 });
 ```
 
-## `baseImageUrl`
+## Parameters
+
+### `baseImageUrl`
 Non-empty string, required.
 
-## `targetImageUrl`
+### `targetImageUrl`
 Non-empty string, required.
 
-## `scale`
+### `scale`
 Float number between `0.01` and `1`, optional, defaults to `1`.
 
 The lower the value, the smaller the resulting diff. Might be helpful when dealing with large images.
 
-## `threshold`
+### `threshold`
 Integer between `0` and `255`, optional, defaults to `0`.
 
-## `isNormalized`
+### `isNormalized`
 Boolean, optional, defaults to `false`.
