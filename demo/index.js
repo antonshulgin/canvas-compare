@@ -4,8 +4,10 @@
 
 	let scale = 1;
 	let threshold = 0;
+	let isNormalized = false;
 	let sliderScale;
 	let sliderThreshold;
+	let checkboxIsNormalized;
 
 	const demo = {};
 
@@ -17,14 +19,20 @@
 	function onLoad() {
 		sliderScale = document.getElementById('sliderScale');
 		sliderThreshold = document.getElementById('sliderThreshold');
+		checkboxIsNormalized = document.getElementById('checkboxIsNormalized');
 		update();
 	}
 
 	function update() {
 		scale = parseFloat(sliderScale.value) || 1;
 		threshold = parseFloat(sliderThreshold.value) || 0;
+		isNormalized = checkboxIsNormalized.checked;
+		console.log(checkboxIsNormalized);
+
 		sliderScale.disabled = true;
 		sliderThreshold.disabled = true;
+		checkboxIsNormalized.disabled = false;
+
 		const params = {
 			//baseImageUrl: './images/base.jpg',
 			//targetImageUrl: './images/target.jpg',
@@ -49,20 +57,24 @@
 			scale: scale,
 			threshold: threshold
 		};
-		const imagesToCompare = window.canvasCompare(params);
-		imagesToCompare
+
+		window.canvasCompare(params)
 			.then(onCompare)
 			.catch(console.error);
-		window.imagesToCompare = imagesToCompare;
 
 		function onCompare(result) {
-			console.log({ result: result });
-			const diffImage = result.getNormalizedImage();
+			const diffImage = result.getImage();
 			const width = diffImage.width;
 			const height = diffImage.height;
 
 			console.log('pixels', result.getPixels());
 			console.log('percentage', result.getPercentage().toFixed(2) + '%');
+
+			const baseImage = document.getElementById('baseImage');
+			baseImage.src = params.baseImageUrl;
+
+			const targetImage = document.getElementById('targetImage');
+			targetImage.src = params.targetImageUrl;
 
 			const canvas = document.createElement('canvas');
 			canvas.width = width;
@@ -71,18 +83,14 @@
 			const context = canvas.getContext('2d');
 			context.putImageData(diffImage, 0, 0);
 
-			const baseImage = document.getElementById('baseImage');
-			baseImage.src = params.baseImageUrl;
-			const targetImage = document.getElementById('targetImage');
-			targetImage.src = params.targetImageUrl;
-			const preview = document.getElementById('preview');
+			const preview = result.producePreview(isNormalized);
+			const previewContainer = document.getElementById('preview');
+			previewContainer.innerHTML = '';
+			previewContainer.appendChild(preview);
 
-			preview.src = canvas.toDataURL();
-			preview.width = Math.round(width / scale) || 1;
-			preview.height = Math.round(height / scale) || 1;
-			preview.style.imageRendering = 'optimizespeed'; // disable interpolation
 			sliderScale.disabled = false;
 			sliderThreshold.disabled = false;
+			checkboxIsNormalized.disabled = false;
 		}
 	}
 

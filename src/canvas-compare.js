@@ -59,7 +59,8 @@
 			const width = baseImage.width;
 			const height = baseImage.height;
 			const diffImage = new ImageData(diffData, width, height);
-			resolve(produceDiffResult(diffImage));
+			console.log(instance);
+			resolve(produceDiffResult(diffImage, instance));
 		}
 	}
 
@@ -110,7 +111,7 @@
 
 	// Diff result logic
 	
-	function produceDiffResult(diffImage) {
+	function produceDiffResult(diffImage, instance) {
 		const internals = {};
 		const externals = {};
 
@@ -120,8 +121,27 @@
 		externals.getNormalizedImage = getNormalizedImage;
 		externals.getPixels = getPixels;
 		externals.getPercentage = getPercentage;
+		externals.producePreview = producePreview;
 
 		return externals;
+
+		function producePreview(isNormalized) {
+			const image = isNormalized ? getNormalizedImage() : getImage();
+			const canvas = document.createElement('canvas');
+			const scale = instance.getScale();
+			const width = image.width;
+			const height = image.height;
+			canvas.width = width;
+			canvas.height = height;
+			const context = canvas.getContext('2d');
+			context.putImageData(image, 0, 0);
+			const imageElement = new Image();
+			imageElement.src = canvas.toDataURL();
+			imageElement.style.imageRendering = 'optimizespeed';
+			imageElement.width = Math.round(width / scale);
+			imageElement.height = Math.round(height / scale);
+			return imageElement;
+		}
 
 		function getPercentage() {
 			const image = getImage();
@@ -330,7 +350,7 @@
 	}
 
 	function panic(reason) {
-		console.error(reason);
+		console.error('[canvas-compare]: ' + reason);
 		return;
 	}
 

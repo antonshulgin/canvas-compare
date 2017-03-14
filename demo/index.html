@@ -10,8 +10,8 @@
 		<div id="root">
 			<div>
 				<img id="baseImage" src="#" alt="base">
-				<img id="preview" src="#" alt="diff">
-				<img id="targetImage" src="$" alt="target">
+				<span id="preview"></span>
+				<img id="targetImage" src="#" alt="target">
 			</div>
 			<div>
 				<label>Adjust scale: </label>
@@ -20,6 +20,10 @@
 			<div>
 				<label>Adjust threshold: </label>
 				<input id="sliderThreshold" type="range" value="0" step="1" min="0" max="255" onchange="demo.update()">
+			</div>
+			<div>
+				<input id="checkboxIsNormalized" type="checkbox" onchange="demo.update()">
+				<label>Normalize</label>
 			</div>
 		</div>
 		<script src="../src/canvas-compare.js"></script>
