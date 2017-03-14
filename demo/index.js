@@ -57,16 +57,19 @@
 
 		function onCompare(result) {
 			console.log({ result: result });
-			const diffData = result;
-			const width = diffData.width;
-			const height = diffData.height;
+			const diffImage = result.getNormalizedImage();
+			const width = diffImage.width;
+			const height = diffImage.height;
+
+			console.log('pixels', result.getPixels());
+			console.log('percentage', result.getPercentage().toFixed(2) + '%');
 
 			const canvas = document.createElement('canvas');
 			canvas.width = width;
 			canvas.height = height;
 
 			const context = canvas.getContext('2d');
-			context.putImageData(diffData, 0, 0);
+			context.putImageData(diffImage, 0, 0);
 
 			const baseImage = document.getElementById('baseImage');
 			baseImage.src = params.baseImageUrl;

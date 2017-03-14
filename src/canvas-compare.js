@@ -107,10 +107,80 @@
 		}
 	}
 
-	// Result logic
+	// Diff result logic
 	
 	function produceDiffResult(diffImage) {
-		return diffImage;
+		const internals = {};
+		const externals = {};
+
+		if (!setImage(diffImage)) { return; }
+
+		externals.getImage = getImage;
+		externals.getNormalizedImage = getNormalizedImage;
+		externals.getPixels = getPixels;
+		externals.getPercentage = getPercentage;
+
+		return externals;
+
+		function getPercentage() {
+			const image = getImage();
+			const pixels = getPixels();
+			const totalPixels = image.data.length / 4;
+			const percent = totalPixels / 100;
+			return pixels / percent;
+		}
+
+		function getPixels() {
+			const image = getImage();
+			const data = image.data;
+			const dataLength = data.length;
+			let score = 0;
+			let idxR, idxG, idxB, idxA;
+			for (let idx = 0; idx < dataLength; idx += 4) {
+				idxR = idx + 0;
+				idxG = idx + 1;
+				idxB = idx + 2;
+				idxA = idx + 3;
+				if (data[idxR] || data[idxG] || data[idxB]) {
+					score += 1;
+				}
+			}
+			return score;
+		}
+
+		function getNormalizedImage() {
+			const image = getImage();
+			const data = image.data;
+			const dataLength = data.length;
+			const normalizedData = new Uint8ClampedArray(dataLength);
+			let idxR, idxG, idxB, idxA;
+			for (let idx = 0; idx < dataLength; idx += 4) {
+				idxR = idx + 0;
+				idxG = idx + 1;
+				idxB = idx + 2;
+				idxA = idx + 3;
+				normalizedData[idxR] = data[idxR] ? 255 : 0;
+				normalizedData[idxG] = data[idxG] ? 255 : 0;
+				normalizedData[idxB] = data[idxB] ? 255 : 0;
+				normalizedData[idxA] = 255;
+			}
+			const width = image.width;
+			const height = image.height;
+			const normalizedImage = new ImageData(normalizedData, width, height);
+			return normalizedImage;
+		}
+
+		function getImage() {
+			return internals.image;
+		}
+
+		function setImage(imageData) {
+			if (!isImageData(imageData)) {
+				return panic('No diff ImageData provided');
+			}
+			internals.image = imageData;
+			return getImage();
+		}
 	}
 
 	// Instance logic
@@ -145,7 +215,7 @@
 
 		function setTargetImage(imageData) {
 			if (!isImageData(imageData)) {
-				return panic('No targetImageData prodided');
+				return panic('No targetImageData provided');
 			}
 			internals.targetImage = imageData;
 			return getTargetImage();
@@ -157,7 +227,7 @@
 
 		function setBaseImage(imageData) {
 			if (!isImageData(imageData)) {
-				return panic('No baseImageData prodided');
+				return panic('No baseImageData provided');
 			}
 			internals.baseImage = imageData;
 			return getBaseImage();
