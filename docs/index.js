@@ -4,6 +4,8 @@
 
 	window.addEventListener('load', onLoad, false);
 
+	var isPreviewPending = false;
+
 	function onLoad() {
 		if (!canvasCompare) { return; }
 
@@ -12,9 +14,9 @@
 
 	function initWebcam() {
 		const frames = [];
-		const videoContainer = document.getElementById('videoContainer');
-		videoContainer.width = 320;
-		videoContainer.height= 240;
+		const video = document.getElementById('video');
+		video.width = 160;
+		video.height = 120;
 
 		const userMediaParams = { video: true, audio: false };
 		navigator.mediaDevices.getUserMedia(userMediaParams)
@@ -22,20 +24,20 @@
 			.catch(console.error);
 
 		function onGetUserMedia(stream) {
-			videoContainer.srcObject = stream;
-			videoContainer.play();
-
-			setInterval(takePicture, 200);
+			video.srcObject = stream;
+			video.play();
+			setInterval(takePicture, 160);
 		}
 
 		function updatePreview(canvas) {
 			frames.unshift(canvas);
 			frames.length = 2;
 			if (!frames[0] || !frames[1]) { return; }
+			isPreviewPending = true;
 			const compareParams = {
 				baseImageUrl: frames[0].toDataURL(),
 				targetImageUrl: frames[1].toDataURL(),
-				scale: 0.01,
+				scale: 0.1,
 				threshold: 20,
 				isNormalized: true
 			};
@@ -48,17 +50,26 @@
 				const preview = document.getElementById('previewContainer');
 				preview.innerHTML = '';
 				preview.appendChild(result.producePreview());
+				console.log({
+					percentage: result.getPercentage(),
+					executionTime: result.getExecutionTime()
+				});
+				isPreviewPending = false;
 			}
 		}
 
 		function takePicture() {
-			const width = videoContainer.width;
-			const height = videoContainer.height;
+			if (isPreviewPending) {
+				console.log('skip');
+				return;
+			}
+			const width = video.width;
+			const height = video.height;
 			const canvas = document.createElement('canvas');
 			canvas.width = width;
 			canvas.height = height;
 			const context = canvas.getContext('2d');
-			context.drawImage(videoContainer, 0, 0, width, height);
+			context.drawImage(video, 0, 0, width, height);
 			updatePreview(canvas);
 		}
 	}
