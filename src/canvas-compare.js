@@ -158,8 +158,10 @@
 			context.putImageData(image, 0, 0);
 			const imageElement = new Image();
 			imageElement.src = canvas.toDataURL();
-			imageElement.style.imageRendering = 'pixelated';
-			imageElement.style.imageRendering = 'optimizespeed';
+			imageElement.style.cssText = [
+				'image-rendering: optimizespeed',
+				'image-rendering: pixelated'
+			].join(';');
 			const scale = instance.getScale();
 			imageElement.width = Math.round(width / scale);
 			imageElement.height = Math.round(height / scale);
