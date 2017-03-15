@@ -1,5 +1,5 @@
 // jshint esnext: true
-(function (outside, undefined) {
+(function (outside) {
 	'use strict';
 
 	const ImageData = outside.ImageData;
