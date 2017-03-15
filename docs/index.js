@@ -1,103 +1,66 @@
 // jshint esnext: true
-(function (window) {
+(function (window, canvasCompare) {
 	'use strict';
 
-	let scale = 1;
-	let threshold = 0;
-	let isNormalized = false;
-	let sliderScale;
-	let sliderThreshold;
-	let checkboxIsNormalized;
-
-	const demo = {};
-
-	demo.update = update;
-
-	window.demo = demo;
 	window.addEventListener('load', onLoad, false);
 
 	function onLoad() {
-		sliderScale = document.getElementById('sliderScale');
-		sliderThreshold = document.getElementById('sliderThreshold');
-		checkboxIsNormalized = document.getElementById('checkboxIsNormalized');
-		update();
+		if (!canvasCompare) { return; }
+
+		initWebcam();
 	}
 
-	function update() {
-		scale = parseFloat(sliderScale.value) || 1;
-		threshold = parseFloat(sliderThreshold.value) || 0;
-		isNormalized = checkboxIsNormalized.checked;
+	function initWebcam() {
+		const frames = [];
+		const videoContainer = document.getElementById('videoContainer');
+		videoContainer.width = 320;
+		videoContainer.height= 240;
 
-		sliderScale.disabled = true;
-		sliderThreshold.disabled = true;
-		checkboxIsNormalized.disabled = false;
-
-		const params = {
-			baseImageUrl: './images/base.jpg',
-			targetImageUrl: './images/target.jpg',
-			//baseImageUrl: './images/1p-01.png',
-			//targetImageUrl: './images/1p-02.png',
-			//baseImageUrl: './images/tri-01.png',
-			//targetImageUrl: './images/tri-02.png',
-			//baseImageUrl: './images/tri02-01.png',
-			//targetImageUrl: './images/tri02-02.png',
-			//baseImageUrl: './images/meadow-01.jpg',
-			//targetImageUrl: './images/meadow-02.jpg',
-			//baseImageUrl: './images/field-01.jpg',
-			//targetImageUrl: './images/field-02.jpg',
-			//baseImageUrl: './images/street-01.jpg',
-			//targetImageUrl: './images/street-02.jpg',
-			//baseImageUrl: './images/cat-01.jpg',
-			//targetImageUrl: './images/cat-02.jpg',
-			//baseImageUrl: './images/whitenoise-01.jpg',
-			//targetImageUrl: './images/whitenoise-02.jpg',
-			//baseImageUrl: './images/ppl-01.jpg',
-			//targetImageUrl: './images/ppl-02.jpg',
-			//baseImageUrl: './images/ls-01.png',
-			//targetImageUrl: './images/ls-02.png',
-			scale: scale,
-			threshold: threshold,
-			isNormalized: isNormalized
-		};
-
-		window.canvasCompare(params)
-			.then(onCompare)
+		const userMediaParams = { video: true, audio: false };
+		navigator.mediaDevices.getUserMedia(userMediaParams)
+			.then(onGetUserMedia)
 			.catch(console.error);
 
-		function onCompare(result) {
-			const diffImage = result.getImage();
-			const width = diffImage.width;
-			const height = diffImage.height;
+		function onGetUserMedia(stream) {
+			videoContainer.srcObject = stream;
+			videoContainer.play();
 
-			const heading = document.getElementById('headingPercentage');
-			heading.textContent = 'Difference: ' + result.getPercentage().toFixed(2) + '%';
+			setInterval(takePicture, 200);
+		}
 
-			const baseImage = document.getElementById('baseImage');
-			baseImage.src = params.baseImageUrl;
+		function updatePreview(canvas) {
+			frames.unshift(canvas);
+			frames.length = 2;
+			if (!frames[0] || !frames[1]) { return; }
+			const compareParams = {
+				baseImageUrl: frames[0].toDataURL(),
+				targetImageUrl: frames[1].toDataURL(),
+				scale: 0.01,
+				threshold: 20,
+				isNormalized: true
+			};
+			canvasCompare(compareParams)
+				.then(onCompare)
+				.catch(console.error);
 
-			const targetImage = document.getElementById('targetImage');
-			targetImage.src = params.targetImageUrl;
+			function onCompare(result) {
+				if (!result) { return; }
+				const preview = document.getElementById('previewContainer');
+				preview.innerHTML = '';
+				preview.appendChild(result.producePreview());
+			}
+		}
 
+		function takePicture() {
+			const width = videoContainer.width;
+			const height = videoContainer.height;
 			const canvas = document.createElement('canvas');
 			canvas.width = width;
 			canvas.height = height;
-
 			const context = canvas.getContext('2d');
-			context.putImageData(diffImage, 0, 0);
-
-			const preview = result.producePreview();
-			const previewContainer = document.getElementById('preview');
-			previewContainer.innerHTML = '';
-			previewContainer.appendChild(preview);
-
-			sliderScale.disabled = false;
-			sliderThreshold.disabled = false;
-			checkboxIsNormalized.disabled = false;
-
-			console.log({
-				executionTime: result.getExecutionTime()
-			});
+			context.drawImage(videoContainer, 0, 0, width, height);
+			updatePreview(canvas);
 		}
 	}
 
-})(this);
+})(this, this.canvasCompare);
