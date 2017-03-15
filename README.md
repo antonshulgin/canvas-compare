@@ -9,7 +9,7 @@ Compare two images to get their by-pixel diff, similarity percentage and stuff.
 const promiseCompare = canvasCompare({
 	baseImageUrl: '/path/to/base/image.jpeg',
 	targetImageUrl: '/path/to/target/picture.png',
-	scale: 0.5, // 0.01..1, optional, defaults to 1
+	resolution: 0.5, // 0.01..1, optional, defaults to 1
 	threshold: 10, // 0..255, optional, defaults to 0
 	isNormalized: true // Boolean, optional, defaults to false
 });
@@ -34,11 +34,11 @@ Non-empty string, required.
 
 Non-empty string, required.
 
-### params.scale
+### params.resolution
 
 Float number between `0.01` and `1`, optional, defaults to `1`.
 
-The lower the value, the smaller the resulting diff. Might be helpful when dealing with large images.
+The lower the value, the smaller the resulting diff image. Might be helpful performance-wise when dealing with large images.
 
 ### params.threshold
 
@@ -50,7 +50,7 @@ If the passed value is lower than `threshold`, it drops to `0`. Useful to filter
 
 Boolean, optional, defaults to `false`.
 
-If the passed value is not a zero, it's set to `255`. In short all the values in a normalized image are either `0`, or `255`.
+If the passed value is not zero, it's set to `255`. In short all the values in a normalized image are either `0`, or `255`.
 
 
 ## Result

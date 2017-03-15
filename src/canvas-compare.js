@@ -84,14 +84,14 @@
 	function readImages(instance) {
 		const baseImageUrl = instance.getBaseImageUrl();
 		const targetImageUrl = instance.getTargetImageUrl();
-		const scale = instance.getScale();
+		const resolution = instance.getResolution();
 		return Promise.all([
-			readImage(baseImageUrl, scale),
-			readImage(targetImageUrl, scale)
+			readImage(baseImageUrl, resolution),
+			readImage(targetImageUrl, resolution)
 		]);
 	}
 
-	function readImage(imageUrl, scale) {
+	function readImage(imageUrl, resolution) {
 		return new Promise(promiseReadImage);
 
 		function promiseReadImage(resolve, reject) {
@@ -101,8 +101,8 @@
 			image.addEventListener('error', onError, false);
 
 			function onLoad() {
-				const width = image.width * scale;
-				const height = image.height * scale;
+				const width = image.width * resolution;
+				const height = image.height * resolution;
 				const canvas = document.createElement('canvas');
 				canvas.width = width;
 				canvas.height = height;
@@ -162,9 +162,9 @@
 				'image-rendering: optimizespeed',
 				'image-rendering: pixelated'
 			].join(';');
-			const scale = instance.getScale();
-			imageElement.width = Math.round(width / scale);
-			imageElement.height = Math.round(height / scale);
+			const resolution = instance.getResolution();
+			imageElement.width = Math.round(width / resolution);
+			imageElement.height = Math.round(height / resolution);
 			return imageElement;
 		}
 
@@ -219,13 +219,13 @@
 		if (!setTargetImageUrl(params.targetImageUrl)) { return; }
 
 		setTimestamp();
-		setScale(params.scale);
+		setResolution(params.resolution);
 		setThreshold(params.threshold);
 		setNormalized(params.isNormalized);
 
 		externals.getTargetImageUrl = getTargetImageUrl;
 		externals.getBaseImageUrl = getBaseImageUrl;
-		externals.getScale = getScale;
+		externals.getResolution = getResolution;
 		externals.getThreshold = getThreshold;
 		externals.setBaseImage = setBaseImage;
 		externals.getBaseImage = getBaseImage;
@@ -308,12 +308,12 @@
 			internals.threshold = sanitizeThreshold(threshold);
 		}
 
-		function getScale() {
-			return internals.scale;
+		function getResolution() {
+			return internals.resolution;
 		}
 
-		function setScale(scale) {
-			internals.scale = sanitizeScale(scale);
+		function setResolution(resolution) {
+			internals.resolution = sanitizeResolution(resolution);
 		}
 	}
 
@@ -334,19 +334,19 @@
 		return threshold;
 	}
 
-	function sanitizeScale(scale) {
-		const MIN_SCALE = 0.01;
-		const MAX_SCALE = 1;
-		if (!isNumber(scale)) {
-			return MAX_SCALE;
+	function sanitizeResolution(resolution) {
+		const MIN_RESOLUTION = 0.01;
+		const MAX_RESOLUTION = 1;
+		if (!isNumber(resolution)) {
+			return MAX_RESOLUTION;
 		}
-		if (scale > MAX_SCALE) {
-			return MAX_SCALE;
+		if (resolution > MAX_RESOLUTION) {
+			return MAX_RESOLUTION;
 		}
-		if (scale < MIN_SCALE) {
-			return MIN_SCALE;
+		if (resolution < MIN_RESOLUTION) {
+			return MIN_RESOLUTION;
 		}
-		return scale;
+		return resolution;
 	}
 
 	function isImageData(item) {

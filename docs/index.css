@@ -36,9 +36,11 @@ body {
 
 #controls {
 	bottom: 0;
-	left: 0;
+	left: 50%;
 	position: fixed;
+	transform: translateX(-50%);
 	z-index: 20;
+	white-space: nowrap;
 }
 
 .panel {
@@ -77,7 +79,7 @@ input[type=checkbox] {
 }
 
 input[type=range] {
-	width: 255px;
+	width: 200px;
 }
 
 input + label {

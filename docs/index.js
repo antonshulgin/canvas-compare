@@ -39,7 +39,7 @@
 			const compareParams = {
 				baseImageUrl: frames[0].toDataURL(),
 				targetImageUrl: frames[1].toDataURL(),
-				scale: parseFloat(controls.scale.value),
+				resolution: parseFloat(controls.resolution.value),
 				threshold: parseInt(controls.threshold.value),
 				isNormalized: controls.isNormalized.checked
 			};
@@ -57,7 +57,7 @@
 
 		function takePicture() {
 			if (isPreviewPending) {
-				console.log('skip');
+				console.log('frame skipped');
 				return;
 			}
 			const width = video.width;
