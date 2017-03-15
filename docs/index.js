@@ -15,9 +15,12 @@
 		const video = document.getElementById('video');
 		video.width = 160;
 		video.height = 120;
+		const movementDetectionNotice = document.getElementById('movementDetectionNotice');
+		const movementPercentage = document.getElementById('movementPercentage');
+		const preview = document.getElementById('preview');
 		const controls = document.forms.controls;
-		const preview = document.getElementById('previewContainer');
 		var isPreviewPending = false;
+		var isMovementDetected = false;
 
 		const userMediaParams = { video: true, audio: false };
 		navigator.mediaDevices.getUserMedia(userMediaParams)
@@ -27,7 +30,7 @@
 		function onGetUserMedia(stream) {
 			video.srcObject = stream;
 			video.play();
-			setInterval(takePicture, 111);
+			setInterval(takePicture, 160);
 		}
 
 		function updatePreview(canvas) {
@@ -35,13 +38,17 @@
 			frames.length = 2;
 
 			if (!frames[0] || !frames[1]) { return; }
+			const resolution = parseFloat(controls.resolution.value);
+			const threshold = parseInt(controls.threshold.value);
+			const movementGate = parseInt(controls.movementGate.value);
+			const isNormalized = controls.isNormalized.checked;
 			isPreviewPending = true;
 			const compareParams = {
 				baseImageUrl: frames[0].toDataURL(),
 				targetImageUrl: frames[1].toDataURL(),
-				resolution: parseFloat(controls.resolution.value),
-				threshold: parseInt(controls.threshold.value),
-				isNormalized: controls.isNormalized.checked
+				resolution: resolution,
+				threshold: threshold,
+				isNormalized: isNormalized
 			};
 			canvasCompare(compareParams)
 				.then(onCompare)
@@ -51,7 +58,14 @@
 				if (!result) { return; }
 				const image = result.producePreview();
 				preview.src = image.src;
+				isMovementDetected = (result.getPercentage() > movementGate);
 				isPreviewPending = false;
+				if (isMovementDetected) {
+					movementDetectionNotice.classList.remove('hidden');
+					movementPercentage.textContent = '(' + result.getPercentage().toFixed(2) + '%)';
+					return;
+				}
+				movementDetectionNotice.classList.add('hidden');
 			}
 		}
 

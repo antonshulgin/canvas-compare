@@ -3,25 +3,25 @@
 }
 
 body {
-	font: 300 9pt/1 sans-serif;
 	background-color: #111;
 	color: #fff;
+	font: 300 9pt/1 sans-serif;
 }
 
 #webcamNotice {
-	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
-	position: fixed;
-	z-index: 0;
 	padding: 16px;
+	position: fixed;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 0;
 }
 
 #video {
 	display: none;
 }
 
-#previewContainer {
+#preview {
 	bottom: 0;
 	height: 100%;
 	image-rendering: optimizespeed;
@@ -39,13 +39,35 @@ body {
 	left: 50%;
 	position: fixed;
 	transform: translateX(-50%);
-	z-index: 20;
 	white-space: nowrap;
+	z-index: 20;
+}
+
+#movementDetectionNotice {
+	background-color: #9f0;
+	color: #230;
+	font-weight: 600;
+	left: 50%;
+	line-height: 2em;
+	margin: 8px;
+	opacity: 1;
+	padding: 8px 16px;
+	position: absolute;
+	position: fixed;
+	top: 0;
+	transform: translateX(-50%);
+	transition: all .6s ease;
+	white-space: nowrap;
+	z-index: 30;
+}
+
+.hidden {
+	opacity: 0 !important;
 }
 
 .panel {
-	background-color: rgba(32,32,32, .6);
-	border-radius: 4px;
+	background-color: rgba(32,32,32, .8);
+	border-radius: 3px;
 	color: #fff;
 	margin: 8px;
 	padding: 8px;
@@ -53,8 +75,8 @@ body {
 
 .inline-items > li {
 	display: inline-block;
-	vertical-align: top;
 	margin: 0 8px;
+	vertical-align: top;
 }
 
 input,
@@ -79,7 +101,7 @@ input[type=checkbox] {
 }
 
 input[type=range] {
-	width: 200px;
+	width: 160px;
 }
 
 input + label {
