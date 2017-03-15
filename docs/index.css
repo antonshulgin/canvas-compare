@@ -35,7 +35,7 @@ body {
 }
 
 #controls {
-	bottom: 0;
+	bottom: 8px;
 	left: 50%;
 	position: fixed;
 	transform: translateX(-50%);
@@ -44,19 +44,15 @@ body {
 }
 
 #movementDetectionNotice {
-	background-color: #9f0;
-	color: #230;
 	font-weight: 600;
 	left: 50%;
 	line-height: 2em;
-	margin: 8px;
 	opacity: 1;
 	padding: 8px 16px;
-	position: absolute;
 	position: fixed;
-	top: 0;
+	top: 8px;
 	transform: translateX(-50%);
-	transition: all .6s ease;
+	transition: all .3s ease;
 	white-space: nowrap;
 	z-index: 30;
 }
@@ -67,9 +63,8 @@ body {
 
 .panel {
 	background-color: rgba(32,32,32, .8);
-	border-radius: 3px;
+	border-radius: 2px;
 	color: #fff;
-	margin: 8px;
 	padding: 8px;
 }
 
