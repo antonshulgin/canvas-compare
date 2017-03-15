@@ -26,9 +26,10 @@
 		function onGetUserMedia(stream) {
 			video.srcObject = stream;
 			video.play();
-			setInterval(takePicture, 160);
+			setInterval(takePicture, 80);
 		}
 
+		const preview = document.getElementById('previewContainer');
 		function updatePreview(canvas) {
 			frames.unshift(canvas);
 			frames.length = 2;
@@ -47,13 +48,8 @@
 
 			function onCompare(result) {
 				if (!result) { return; }
-				const preview = document.getElementById('previewContainer');
-				preview.innerHTML = '';
-				preview.appendChild(result.producePreview());
-				console.log({
-					percentage: result.getPercentage(),
-					executionTime: result.getExecutionTime()
-				});
+				const image = result.producePreview();
+				preview.src = image.src;
 				isPreviewPending = false;
 			}
 		}
