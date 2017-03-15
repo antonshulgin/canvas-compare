@@ -43,6 +43,12 @@ body {
 	z-index: 20;
 }
 
+#rangeResolutionValue,
+#rangeThresholdValue,
+#rangeGateValue {
+	min-width: 2em;
+}
+
 #movementDetectionNotice {
 	font-weight: 600;
 	left: 50%;
@@ -89,6 +95,7 @@ label + input {
 
 .label-text {
 	display: inline-block;
+	vertical-align: middle;
 }
 
 input[type=checkbox] {

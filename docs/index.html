@@ -17,18 +17,23 @@
 						<span class="label-text">Resolution:</span>
 					</label>
 					<input id="rangeResolution" name="resolution" type="range" step="0.05" min="0.05" max="1" value="0.1">
+					<span id="rangeResolutionValue" class="label-text"></span>
 				</li>
 				<li title="All values below the threshold are ignored">
 					<label for="rangeThreshold">
 						<span class="label-text">Threshold:</span>
 					</label>
 					<input id="rangeThreshold" name="threshold" type="range" step="5" min="0" max="255" value="10">
+					<span id="rangeThresholdValue" class="label-text"></span>
 				</li>
 				<li title="Set what percentage should be treated as movement">
-					<label for="rangeMovementGate">
-						<span class="label-text">Movement gate:</span>
+					<label for="rangeGate">
+						<span class="label-text">Gate:</span>
 					</label>
-					<input id="rangeMovementGate" name="movementGate" type="range" step="1" min="0" max="100" value="5">
+					<input id="rangeGate" name="gate" type="range" step="1" min="0" max="100" value="5">
+					<label for="rangeGate">
+						<span id="rangeGateValue" class="label-text"></span>
+					</label>
 				</li>
 				<li title="Make the difference more visible">
 					<input id="checkboxIsNormalized" name="isNormalized" type="checkbox" checked>

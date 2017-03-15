@@ -19,6 +19,9 @@
 		const movementPercentage = document.getElementById('movementPercentage');
 		const preview = document.getElementById('preview');
 		const controls = document.forms.controls;
+		const rangeResolutionValue = document.getElementById('rangeResolutionValue');
+		const rangeThresholdValue = document.getElementById('rangeThresholdValue');
+		const rangeGateValue = document.getElementById('rangeGateValue');
 		var isPreviewPending = false;
 		var isMovementDetected = false;
 
@@ -40,8 +43,11 @@
 			if (!frames[0] || !frames[1]) { return; }
 			const resolution = parseFloat(controls.resolution.value);
 			const threshold = parseInt(controls.threshold.value);
-			const movementGate = parseInt(controls.movementGate.value);
+			const gate = parseInt(controls.gate.value);
 			const isNormalized = controls.isNormalized.checked;
+			rangeResolutionValue.textContent = resolution;
+			rangeThresholdValue.textContent = threshold;
+			rangeGateValue.textContent = parseInt(gate) + '%';
 			isPreviewPending = true;
 			const compareParams = {
 				baseImageUrl: frames[0].toDataURL(),
@@ -58,7 +64,7 @@
 				if (!result) { return; }
 				const image = result.producePreview();
 				preview.src = image.src;
-				isMovementDetected = (result.getPercentage() > movementGate);
+				isMovementDetected = (result.getPercentage() > gate);
 				isPreviewPending = false;
 				if (isMovementDetected) {
 					movementDetectionNotice.classList.remove('hidden');
