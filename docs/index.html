@@ -9,7 +9,32 @@
 	</head>
 	<body>
 		<video id="video"></video>
-		<img id="previewContainer" src="#" alt="diff">
+		<img id="previewContainer" src="#" alt="">
+		<form id="controls" class="panel" novalidate action="">
+			<ul class="inline-items">
+				<li>
+					<label for="rangeScale">
+						<span class="label-text">Scale:</span>
+					</label>
+					<input id="rangeScale" name="scale" type="range" step="0.05" min="0.05" max="1" value="0.1">
+				</li>
+				<li>
+					<label for="rangeThreshold">
+						<span class="label-text">Threshold:</span>
+					</label>
+					<input id="rangeThreshold" name="threshold" type="range" step="5" min="0" max="255" value="10">
+				</li>
+				<li>
+					<input id="checkboxIsNormalized" name="isNormalized" type="checkbox" checked>
+					<label for="checkboxIsNormalized">
+						<span class="label-text">Normalize</span>
+					</label>
+				</li>
+			</ul>
+		</form>
+		<div id="webcamNotice" class="panel">
+			<p>Please make sure your webcam is active.</p>
+		</div>
 		<script src="./canvas-compare.min.js"></script>
 		<script src="./index.js"></script>
 	</body>

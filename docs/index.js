@@ -4,8 +4,6 @@
 
 	window.addEventListener('load', onLoad, false);
 
-	var isPreviewPending = false;
-
 	function onLoad() {
 		if (!canvasCompare) { return; }
 
@@ -17,6 +15,9 @@
 		const video = document.getElementById('video');
 		video.width = 160;
 		video.height = 120;
+		const controls = document.forms.controls;
+		const preview = document.getElementById('previewContainer');
+		var isPreviewPending = false;
 
 		const userMediaParams = { video: true, audio: false };
 		navigator.mediaDevices.getUserMedia(userMediaParams)
@@ -26,21 +27,21 @@
 		function onGetUserMedia(stream) {
 			video.srcObject = stream;
 			video.play();
-			setInterval(takePicture, 80);
+			setInterval(takePicture, 111);
 		}
 
-		const preview = document.getElementById('previewContainer');
 		function updatePreview(canvas) {
 			frames.unshift(canvas);
 			frames.length = 2;
+
 			if (!frames[0] || !frames[1]) { return; }
 			isPreviewPending = true;
 			const compareParams = {
 				baseImageUrl: frames[0].toDataURL(),
 				targetImageUrl: frames[1].toDataURL(),
-				scale: 0.1,
-				threshold: 20,
-				isNormalized: true
+				scale: parseFloat(controls.scale.value),
+				threshold: parseInt(controls.threshold.value),
+				isNormalized: controls.isNormalized.checked
 			};
 			canvasCompare(compareParams)
 				.then(onCompare)

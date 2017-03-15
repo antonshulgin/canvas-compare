@@ -2,6 +2,21 @@
 	box-sizing: border-box;
 }
 
+body {
+	font: 300 9pt/1 sans-serif;
+	background-color: #111;
+	color: #fff;
+}
+
+#webcamNotice {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	position: fixed;
+	z-index: 0;
+	padding: 16px;
+}
+
 #video {
 	display: none;
 }
@@ -17,4 +32,54 @@
 	top: 0;
 	width: 100%;
 	z-index: 10;
+}
+
+#controls {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	z-index: 20;
+}
+
+.panel {
+	background-color: rgba(32,32,32, .6);
+	border-radius: 4px;
+	color: #fff;
+	margin: 8px;
+	padding: 8px;
+}
+
+.inline-items > li {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 8px;
+}
+
+input,
+label {
+	display: inline-block;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+
+label + input {
+	margin-left: 4px;
+}
+
+.label-text {
+	display: inline-block;
+}
+
+input[type=checkbox] {
+	vertical-align: baseline;
+}
+
+input[type=range] {
+	width: 255px;
+}
+
+input + label {
+	margin-left: 4px;
 }
