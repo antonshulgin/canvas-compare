@@ -3,6 +3,13 @@
 Compare two images to get their by-pixel diff, similarity percentage and stuff.
 
 
+## Install
+
+```shell
+npm i canvas-compare
+```
+
+
 ## Usage
 
 ```javascript
@@ -76,3 +83,8 @@ Returns an `<img>` element with the diff representation.
 ### result.getExecutionTime()
 
 Returns execution time in milliseconds.
+
+
+## Demo
+
+[Motion detection example](https://antonshulgin.github.io/canvas-compare/) (requires a webcam).
