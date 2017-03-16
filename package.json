@@ -1,6 +1,6 @@
 {
   "name": "canvas-compare",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Compare two images to get their by-pixel diff, similarity percentage and stuff.",
   "main": "src/canvas-compare.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "reset-dist": "rm -rf ./dist/ && mkdir ./dist/",
     "uglify": "uglifyjs ./src/canvas-compare.js --compress --mangle --output=./dist/canvas-compare.min.js",
     "version-bump": "npm version major",
-		"update-demo": "cp ./dist/canvas-compare.min.js ./docs/"
+    "update-demo": "cp ./dist/canvas-compare.min.js ./docs/"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "image-diff",
     "canvas",
     "compare",
-		"diff"
+    "diff"
   ],
   "files": [
     "src/canvas-compare.js",
