@@ -13,13 +13,15 @@ npm i canvas-compare
 ## Usage
 
 ```javascript
-const promiseCompare = canvasCompare({
+const params = {
 	baseImageUrl: '/path/to/base/image.jpeg',
 	targetImageUrl: '/path/to/target/picture.png',
 	resolution: 0.5, // 0.01..1, optional, defaults to 1
 	threshold: 10, // 0..255, optional, defaults to 0
 	isNormalized: true // Boolean, optional, defaults to false
-});
+};
+
+const promiseCompare = canvasCompare(params);
 
 promiseCompare.then(function (result) {
 	// Do things with result
