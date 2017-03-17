@@ -2,6 +2,8 @@
 
 Compare two images to get their by-pixel diff, similarity percentage and stuff.
 
+[Motion detection demo](https://antonshulgin.github.io/canvas-compare/) (requires a webcam).
+
 
 ## Install
 
@@ -85,8 +87,3 @@ Returns an `<img>` element with the diff representation.
 ### result.getExecutionTime()
 
 Returns execution time in milliseconds.
-
-
-## Demo
-
-[Motion detection example](https://antonshulgin.github.io/canvas-compare/) (requires a webcam).
